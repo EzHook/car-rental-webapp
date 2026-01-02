@@ -8,11 +8,13 @@ import {
   List,
   Users,
   ChevronLeft,
-  Shield
+  Shield,
+  Menu,
+  X
 } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 const menuItems = [
   {
@@ -45,84 +47,156 @@ const menuItems = [
 export default function AdminSidebar() {
   const pathname = usePathname();
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isMobileOpen, setIsMobileOpen] = useState(false);
+
+  // Close mobile menu when route changes
+  useEffect(() => {
+    setIsMobileOpen(false);
+  }, [pathname]);
+
+  // Prevent body scroll when mobile menu is open
+  useEffect(() => {
+    if (isMobileOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [isMobileOpen]);
 
   return (
-    <aside
-      className={`bg-white border-r border-gray-200 transition-all duration-300 ${
-        isCollapsed ? 'w-20' : 'w-64'
-      } flex flex-col h-screen sticky top-0`}
-    >
-      {/* Logo */}
-      <div className="h-16 border-b border-gray-200 flex items-center justify-between px-4">
-        {!isCollapsed && (
-          <Link href="/admin/dashboard" className="flex items-center gap-2">
-            <Shield className="size-8 text-primary-blue" />
-            <div>
-              <h1 className="text-xl font-bold text-primary-blue">MORENT</h1>
-              <p className="text-xs text-gray-500">Admin Panel</p>
-            </div>
-          </Link>
-        )}
-        {isCollapsed && (
-          <Link href="/admin/dashboard" className="flex items-center justify-center w-full">
-            <Shield className="size-8 text-primary-blue" />
-          </Link>
-        )}
-      </div>
-
-      {/* Collapse Button */}
+    <>
+      {/* Mobile Menu Button - Only visible on mobile */}
       <button
-        onClick={() => setIsCollapsed(!isCollapsed)}
-        className="absolute -right-3 top-20 bg-white border border-gray-200 rounded-full p-1 hover:bg-gray-50 transition-colors z-10"
+        onClick={() => setIsMobileOpen(!isMobileOpen)}
+        className="lg:hidden fixed top-4 left-4 z-50 p-2 bg-bg-card border border-bg-elevated rounded-lg shadow-lg hover:bg-bg-elevated transition-colors"
+        aria-label="Toggle menu"
       >
-        <ChevronLeft
-          className={`size-4 text-gray-600 transition-transform ${
-            isCollapsed ? 'rotate-180' : ''
-          }`}
-        />
+        {isMobileOpen ? (
+          <X className="size-6 text-gold" />
+        ) : (
+          <Menu className="size-6 text-gold" />
+        )}
       </button>
 
-      {/* Navigation */}
-      <nav className="flex-1 overflow-y-auto py-6">
-        <ul className="space-y-1 px-3">
-          {menuItems.map((item) => {
-            const Icon = item.icon;
-            const isActive = pathname === item.href;
-
-            return (
-              <li key={item.href}>
-                <Link
-                  href={item.href}
-                  className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors ${
-                    isActive
-                      ? 'bg-primary-blue text-white'
-                      : 'text-gray-700 hover:bg-gray-100'
-                  } ${isCollapsed ? 'justify-center' : ''}`}
-                  title={isCollapsed ? item.label : ''}
-                >
-                  <Icon className="size-5 shrink-0" />
-                  {!isCollapsed && (
-                    <span className="font-medium">{item.label}</span>
-                  )}
-                </Link>
-              </li>
-            );
-          })}
-        </ul>
-      </nav>
-
-      {/* Footer */}
-      {!isCollapsed && (
-        <div className="p-4 border-t border-gray-200">
-          <Link
-            href="/"
-            className="flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900 transition-colors"
-          >
-            <Car className="size-4" />
-            <span>View Main Site</span>
-          </Link>
-        </div>
+      {/* Mobile Overlay */}
+      {isMobileOpen && (
+        <div
+          className="lg:hidden fixed inset-0 bg-black/70 backdrop-blur-sm z-40 animate-fadeIn"
+          onClick={() => setIsMobileOpen(false)}
+          aria-hidden="true"
+        />
       )}
-    </aside>
+
+      {/* Sidebar */}
+      <aside
+        className={`
+          bg-bg-secondary border-r border-bg-elevated transition-all duration-300 
+          flex flex-col h-screen shadow-xl
+          
+          ${isCollapsed ? 'w-20' : 'w-64'}
+          
+          fixed lg:sticky top-0 left-0 z-50
+          ${isMobileOpen ? 'translate-x-0' : '-translate-x-full'}
+          lg:translate-x-0
+        `}
+      >
+        {/* Logo */}
+        <div className="h-16 border-b border-bg-elevated flex items-center justify-between px-4 bg-bg-secondary shrink-0">
+          {!isCollapsed && (
+            <Link 
+              href="/admin/dashboard" 
+              className="flex items-center gap-2"
+            >
+              <div className="size-8 bg-gold rounded-lg flex items-center justify-center shadow-md shadow-gold/30">
+                <Shield className="size-5 text-black" />
+              </div>
+              <div>
+                <h1 className="text-lg font-bold text-gold">RENTAL DRIVE</h1>
+                <p className="text-xs text-gray-400">Admin Panel</p>
+              </div>
+            </Link>
+          )}
+          {isCollapsed && (
+            <Link 
+              href="/admin/dashboard" 
+              className="flex items-center justify-center w-full"
+            >
+              <div className="size-8 bg-gold rounded-lg flex items-center justify-center shadow-md shadow-gold/30">
+                <Shield className="size-5 text-black" />
+              </div>
+            </Link>
+          )}
+        </div>
+
+        {/* Collapse Button - Desktop Only */}
+        <button
+          onClick={() => setIsCollapsed(!isCollapsed)}
+          className="hidden lg:block absolute -right-3 top-20 bg-bg-card border border-bg-elevated rounded-full p-1 hover:bg-bg-elevated hover:border-gold/50 transition-all z-10 shadow-lg"
+          aria-label="Toggle sidebar"
+        >
+          <ChevronLeft
+            className={`size-4 text-gold transition-transform ${
+              isCollapsed ? 'rotate-180' : ''
+            }`}
+          />
+        </button>
+
+        {/* Navigation */}
+        <nav className="flex-1 overflow-y-auto py-6 scrollbar-thin scrollbar-thumb-bg-elevated scrollbar-track-transparent">
+          <ul className="space-y-1 px-3">
+            {menuItems.map((item) => {
+              const Icon = item.icon;
+              const isActive = pathname === item.href;
+
+              return (
+                <li key={item.href}>
+                  <Link
+                    href={item.href}
+                    className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-300 ${
+                      isActive
+                        ? 'bg-gold text-black shadow-lg shadow-gold/30 font-bold'
+                        : 'text-gray-300 hover:bg-bg-elevated hover:text-gold'
+                    } ${isCollapsed ? 'justify-center' : ''}`}
+                    title={isCollapsed ? item.label : ''}
+                  >
+                    <Icon className="size-5 shrink-0" />
+                    {!isCollapsed && (
+                      <span className="font-medium">{item.label}</span>
+                    )}
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
+        </nav>
+
+        {/* Footer */}
+        {!isCollapsed && (
+          <div className="p-4 border-t border-bg-elevated bg-bg-secondary shrink-0">
+            <Link
+              href="/"
+              className="flex items-center gap-2 text-sm text-gray-400 hover:text-gold transition-colors font-medium"
+            >
+              <Car className="size-4" />
+              <span>View Main Site</span>
+            </Link>
+          </div>
+        )}
+
+        {/* Mobile Close Button at Bottom */}
+        <div className="lg:hidden p-4 border-t border-bg-elevated shrink-0">
+          <button
+            onClick={() => setIsMobileOpen(false)}
+            className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-bg-elevated text-gray-300 rounded-lg hover:bg-bg-card hover:text-gold transition-colors font-medium"
+          >
+            <X className="size-4" />
+            <span>Close Menu</span>
+          </button>
+        </div>
+      </aside>
+    </>
   );
 }

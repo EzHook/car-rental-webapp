@@ -62,7 +62,7 @@ export default function AdminLayout({
 
   // Show admin layout with sidebar and header
   return (
-    <div className="flex h-screen overflow-hidden bg-gray-50">
+    <div className="flex h-screen overflow-hidden bg-bg-main">
       <AdminSidebar />
       <div className="flex-1 flex flex-col overflow-hidden">
         <AdminHeader admin={admin} />

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Upload, X, Loader2, Image as ImageIcon } from 'lucide-react';
+import { Upload, X, Loader2, Image as ImageIcon, ArrowLeft } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
 export default function AddCarPage() {
@@ -130,24 +130,31 @@ export default function AddCarPage() {
   };
 
   return (
-    <div className="p-6 lg:p-8">
+    <div className="p-4 sm:p-6 lg:p-8 min-h-screen">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">Add New Car</h1>
-          <p className="text-gray-600">Fill in the details to add a new car to your inventory</p>
+        <div className="mb-6 sm:mb-8">
+          <button
+            onClick={() => router.back()}
+            className="flex items-center gap-2 text-gray-400 hover:text-gold transition-colors mb-4"
+          >
+            <ArrowLeft className="size-4" />
+            <span className="text-sm">Back</span>
+          </button>
+          <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gold mb-2">Add New Car</h1>
+          <p className="text-sm sm:text-base text-gray-400">Fill in the details to add a new car to your inventory</p>
         </div>
 
         {/* Form */}
-        <form onSubmit={handleSubmit} className="bg-white rounded-xl shadow-sm p-6 lg:p-8">
+        <form onSubmit={handleSubmit} className="bg-bg-card border border-bg-elevated rounded-xl shadow-lg p-5 sm:p-6 lg:p-8">
           {/* Image Upload */}
           <div className="mb-6">
-            <label className="block text-sm font-semibold text-gray-900 mb-3">
-              Car Image <span className="text-red-500">*</span>
+            <label className="block text-sm font-semibold text-white mb-3">
+              Car Image <span className="text-red-400">*</span>
             </label>
             
             {imagePreview ? (
-              <div className="relative border-2 border-gray-200 rounded-lg p-4">
+              <div className="relative border-2 border-bg-elevated rounded-lg p-4 bg-bg-elevated">
                 <img 
                   src={imagePreview} 
                   alt="Preview" 
@@ -160,12 +167,12 @@ export default function AddCarPage() {
                 >
                   <X className="size-5" />
                 </button>
-                <div className="mt-3 text-center text-sm text-gray-600">
+                <div className="mt-3 text-center text-sm text-gray-400">
                   {imageFile?.name}
                 </div>
               </div>
             ) : (
-              <div className="border-2 border-dashed border-gray-300 rounded-lg p-12 text-center hover:border-primary-blue transition-colors cursor-pointer relative">
+              <div className="border-2 border-dashed border-bg-elevated rounded-lg p-8 sm:p-12 text-center hover:border-gold transition-colors cursor-pointer relative bg-bg-elevated/50">
                 <input
                   type="file"
                   accept="image/*"
@@ -173,11 +180,11 @@ export default function AddCarPage() {
                   className="absolute inset-0 opacity-0 cursor-pointer"
                   required
                 />
-                <ImageIcon className="size-16 text-gray-400 mx-auto mb-4" />
-                <p className="text-base text-gray-700 mb-2 font-semibold">
+                <ImageIcon className="size-12 sm:size-16 text-gold mx-auto mb-4" />
+                <p className="text-sm sm:text-base text-white mb-2 font-semibold">
                   Click to upload or drag and drop
                 </p>
-                <p className="text-sm text-gray-500">
+                <p className="text-xs sm:text-sm text-gray-400">
                   PNG, JPG, WEBP up to 5MB
                 </p>
               </div>
@@ -185,70 +192,70 @@ export default function AddCarPage() {
           </div>
 
           {/* Form Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 mb-6">
             <div>
-              <label className="block text-sm font-semibold text-gray-900 mb-2">
-                Car Name <span className="text-red-500">*</span>
+              <label className="block text-sm font-semibold text-gray-300 mb-2">
+                Car Name <span className="text-red-400">*</span>
               </label>
               <input
                 type="text"
                 required
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-blue"
+                className="w-full px-4 py-2.5 bg-bg-elevated border border-bg-elevated rounded-lg focus:outline-none focus:ring-2 focus:ring-gold text-white placeholder:text-gray-500"
                 placeholder="e.g., Nissan GT-R"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-gray-900 mb-2">
-                Car Type <span className="text-red-500">*</span>
+              <label className="block text-sm font-semibold text-gray-300 mb-2">
+                Car Type <span className="text-red-400">*</span>
               </label>
               <select
                 value={formData.type}
                 onChange={(e) => setFormData({ ...formData, type: e.target.value })}
-                className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-blue"
+                className="w-full px-4 py-2.5 bg-bg-elevated border border-bg-elevated rounded-lg focus:outline-none focus:ring-2 focus:ring-gold text-white"
               >
-                <option value="Sport">Sport</option>
-                <option value="SUV">SUV</option>
-                <option value="Sedan">Sedan</option>
-                <option value="Hatchback">Hatchback</option>
-                <option value="MPV">MPV</option>
-                <option value="Coupe">Coupe</option>
+                <option value="Sport" className="bg-bg-elevated">Sport</option>
+                <option value="SUV" className="bg-bg-elevated">SUV</option>
+                <option value="Sedan" className="bg-bg-elevated">Sedan</option>
+                <option value="Hatchback" className="bg-bg-elevated">Hatchback</option>
+                <option value="MPV" className="bg-bg-elevated">MPV</option>
+                <option value="Coupe" className="bg-bg-elevated">Coupe</option>
               </select>
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-gray-900 mb-2">
-                Fuel Capacity <span className="text-red-500">*</span>
+              <label className="block text-sm font-semibold text-gray-300 mb-2">
+                Fuel Capacity <span className="text-red-400">*</span>
               </label>
               <input
                 type="text"
                 required
                 value={formData.fuelCapacity}
                 onChange={(e) => setFormData({ ...formData, fuelCapacity: e.target.value })}
-                className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-blue"
+                className="w-full px-4 py-2.5 bg-bg-elevated border border-bg-elevated rounded-lg focus:outline-none focus:ring-2 focus:ring-gold text-white placeholder:text-gray-500"
                 placeholder="e.g., 80L"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-gray-900 mb-2">
-                Transmission <span className="text-red-500">*</span>
+              <label className="block text-sm font-semibold text-gray-300 mb-2">
+                Transmission <span className="text-red-400">*</span>
               </label>
               <select
                 value={formData.transmission}
                 onChange={(e) => setFormData({ ...formData, transmission: e.target.value })}
-                className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-blue"
+                className="w-full px-4 py-2.5 bg-bg-elevated border border-bg-elevated rounded-lg focus:outline-none focus:ring-2 focus:ring-gold text-white"
               >
-                <option value="Manual">Manual</option>
-                <option value="Automatic">Automatic</option>
+                <option value="Manual" className="bg-bg-elevated">Manual</option>
+                <option value="Automatic" className="bg-bg-elevated">Automatic</option>
               </select>
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-gray-900 mb-2">
-                Capacity (People) <span className="text-red-500">*</span>
+              <label className="block text-sm font-semibold text-gray-300 mb-2">
+                Capacity (People) <span className="text-red-400">*</span>
               </label>
               <input
                 type="number"
@@ -257,28 +264,28 @@ export default function AddCarPage() {
                 max="8"
                 value={formData.capacity}
                 onChange={(e) => setFormData({ ...formData, capacity: e.target.value })}
-                className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-blue"
+                className="w-full px-4 py-2.5 bg-bg-elevated border border-bg-elevated rounded-lg focus:outline-none focus:ring-2 focus:ring-gold text-white placeholder:text-gray-500"
                 placeholder="e.g., 4"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-gray-900 mb-2">
-                License Plate <span className="text-red-500">*</span>
+              <label className="block text-sm font-semibold text-gray-300 mb-2">
+                License Plate <span className="text-red-400">*</span>
               </label>
               <input
                 type="text"
                 required
                 value={formData.licensePlate}
                 onChange={(e) => setFormData({ ...formData, licensePlate: e.target.value.toUpperCase() })}
-                className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-blue"
+                className="w-full px-4 py-2.5 bg-bg-elevated border border-bg-elevated rounded-lg focus:outline-none focus:ring-2 focus:ring-gold text-white placeholder:text-gray-500"
                 placeholder="e.g., MH-01-AB-1234"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-gray-900 mb-2">
-                Price per Day (₹) <span className="text-red-500">*</span>
+              <label className="block text-sm font-semibold text-gray-300 mb-2">
+                Price per Day (₹) <span className="text-red-400">*</span>
               </label>
               <input
                 type="number"
@@ -287,13 +294,13 @@ export default function AddCarPage() {
                 step="0.01"
                 value={formData.price}
                 onChange={(e) => setFormData({ ...formData, price: e.target.value })}
-                className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-blue"
+                className="w-full px-4 py-2.5 bg-bg-elevated border border-bg-elevated rounded-lg focus:outline-none focus:ring-2 focus:ring-gold text-white placeholder:text-gray-500"
                 placeholder="e.g., 99.00"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-gray-900 mb-2">
+              <label className="block text-sm font-semibold text-gray-300 mb-2">
                 Original Price (₹) - Optional
               </label>
               <input
@@ -302,7 +309,7 @@ export default function AddCarPage() {
                 step="0.01"
                 value={formData.originalPrice}
                 onChange={(e) => setFormData({ ...formData, originalPrice: e.target.value })}
-                className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-blue"
+                className="w-full px-4 py-2.5 bg-bg-elevated border border-bg-elevated rounded-lg focus:outline-none focus:ring-2 focus:ring-gold text-white placeholder:text-gray-500"
                 placeholder="e.g., 120.00"
               />
             </div>
@@ -310,24 +317,24 @@ export default function AddCarPage() {
 
           {/* Description */}
           <div className="mb-6">
-            <label className="block text-sm font-semibold text-gray-900 mb-2">
+            <label className="block text-sm font-semibold text-gray-300 mb-2">
               Description (Optional)
             </label>
             <textarea
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
               rows={4}
-              className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-blue resize-none"
+              className="w-full px-4 py-2.5 bg-bg-elevated border border-bg-elevated rounded-lg focus:outline-none focus:ring-2 focus:ring-gold resize-none text-white placeholder:text-gray-500"
               placeholder="Enter car description..."
             />
           </div>
 
           {/* Submit Buttons */}
-          <div className="flex items-center gap-4">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4">
             <button
               type="submit"
               disabled={loading || uploading}
-              className="px-6 py-2.5 bg-primary-blue text-white rounded-lg font-semibold hover:bg-[#264ac6] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+              className="w-full sm:w-auto px-6 py-2.5 bg-gold text-black rounded-lg font-bold hover:bg-gold-light transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-lg shadow-gold/30 hover:shadow-gold-light/40 hover:scale-105"
             >
               {loading ? (
                 <>
@@ -345,7 +352,7 @@ export default function AddCarPage() {
               type="button"
               onClick={() => router.back()}
               disabled={loading || uploading}
-              className="px-6 py-2.5 bg-gray-100 text-gray-700 rounded-lg font-semibold hover:bg-gray-200 transition-colors disabled:opacity-50"
+              className="w-full sm:w-auto px-6 py-2.5 bg-bg-elevated text-gray-300 rounded-lg font-semibold hover:bg-bg-card hover:text-white transition-colors disabled:opacity-50 border border-bg-elevated"
             >
               Cancel
             </button>
