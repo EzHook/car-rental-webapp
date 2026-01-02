@@ -52,7 +52,7 @@ export default function AdminLoginPage() {
             <div className="inline-flex items-center justify-center size-16 bg-gold rounded-full mb-4 shadow-lg shadow-gold/30">
               <Shield className="size-8 text-black" />
             </div>
-            <h1 className="text-3xl sm:text-4xl font-bold text-gold mb-2">MORENT</h1>
+            <h1 className="text-3xl sm:text-4xl font-bold text-gold mb-2">RENTAL DRIVE</h1>
             <h2 className="text-xl sm:text-2xl font-bold text-white">Admin Panel</h2>
             <p className="text-gray-400 mt-2 text-sm sm:text-base">
               Sign in to access the admin dashboard
