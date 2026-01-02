@@ -121,17 +121,17 @@ export default function SettingsPage() {
     if (isPDF(url)) {
       return (
         <div className="space-y-3">
-          <div className="h-40 bg-gray-100 rounded-lg flex items-center justify-center border border-gray-200">
+          <div className="h-40 bg-bg-elevated rounded-lg flex items-center justify-center border border-bg-elevated">
             <div className="text-center">
-              <FileText className="size-12 text-gray-400 mx-auto mb-2" />
-              <p className="text-sm text-gray-600">PDF Document</p>
+              <FileText className="size-12 text-gold mx-auto mb-2" />
+              <p className="text-sm text-gray-300">PDF Document</p>
             </div>
           </div>
           <a
             href={url}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 px-4 py-2 bg-primary-blue text-white rounded-lg hover:bg-blue-600 transition-colors text-sm"
+            className="inline-flex items-center gap-2 px-4 py-2 bg-gold text-black rounded-lg hover:bg-gold-light transition-all duration-300 text-sm font-semibold shadow-lg shadow-gold/30"
           >
             <ExternalLink className="size-4" />
             View Document
@@ -140,7 +140,7 @@ export default function SettingsPage() {
       );
     } else {
       return (
-        <div className="relative h-40 bg-gray-100 rounded-lg overflow-hidden">
+        <div className="relative h-40 bg-bg-elevated rounded-lg overflow-hidden border border-bg-elevated">
           <Image
             src={url}
             alt={title}
@@ -154,40 +154,40 @@ export default function SettingsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="size-8 animate-spin text-primary-blue" />
+      <div className="min-h-screen bg-bg-main flex items-center justify-center">
+        <Loader2 className="size-8 animate-spin text-gold" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8 px-4 md:px-8">
+    <div className="min-h-screen bg-bg-main py-8 px-4 md:px-8">
       <div className="max-w-4xl mx-auto">
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+        <div className="bg-bg-card border border-bg-elevated rounded-lg shadow-lg overflow-hidden">
           {/* Header */}
-          <div className="bg-linear-to-r from-primary-blue to-blue-600 px-6 py-8">
+          <div className="bg-linear-to-r from-bg-elevated to-bg-secondary px-6 py-8 border-b border-bg-elevated">
             <h1 className="text-2xl font-bold text-white">Account Settings</h1>
-            <p className="text-blue-100 mt-1">Manage your profile and documents</p>
+            <p className="text-gray-400 mt-1">Manage your profile and documents</p>
           </div>
 
           {/* Success Message */}
           {successMessage && (
-            <div className="mx-6 mt-6 p-4 bg-green-50 border border-green-200 rounded-lg flex items-center gap-2">
-              <CheckCircle className="size-5 text-green-600" />
-              <span className="text-green-800">{successMessage}</span>
+            <div className="mx-6 mt-6 p-4 bg-green-900/30 border border-green-700 rounded-lg flex items-center gap-2">
+              <CheckCircle className="size-5 text-green-400" />
+              <span className="text-green-300">{successMessage}</span>
             </div>
           )}
 
           {/* Profile Information */}
-          <div className="p-6 border-b border-gray-200">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-              <User className="size-5 text-primary-blue" />
+          <div className="p-6 border-b border-bg-elevated">
+            <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+              <User className="size-5 text-gold" />
               Profile Information
             </h2>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-300 mb-2">
                   Full Name
                 </label>
                 <input
@@ -195,18 +195,18 @@ export default function SettingsPage() {
                   name="fullName"
                   value={formData.fullName}
                   onChange={handleInputChange}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-blue"
+                  className="w-full px-4 py-2 bg-bg-elevated border border-bg-elevated rounded-lg focus:outline-none focus:ring-2 focus:ring-gold text-white placeholder:text-gray-500"
                   placeholder="Enter your full name"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-300 mb-2">
                   Phone Number
                 </label>
-                <div className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg bg-gray-50">
+                <div className="flex items-center gap-2 px-4 py-2 border border-bg-elevated rounded-lg bg-bg-elevated">
                   <Phone className="size-4 text-gray-400" />
-                  <span className="text-gray-700">
+                  <span className="text-gray-300">
                     {user?.countryCode} {user?.phone}
                   </span>
                 </div>
@@ -217,7 +217,7 @@ export default function SettingsPage() {
             <button
               onClick={handleSaveProfile}
               disabled={saving}
-              className="mt-6 px-6 py-2 bg-primary-blue hover:bg-blue-600 text-white rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+              className="mt-6 px-6 py-2 bg-gold hover:bg-gold-light text-black rounded-lg font-bold transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 shadow-lg shadow-gold/30"
             >
               {saving ? (
                 <>
@@ -232,15 +232,15 @@ export default function SettingsPage() {
 
           {/* Document Upload */}
           <div className="p-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-              <FileText className="size-5 text-primary-blue" />
+            <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+              <FileText className="size-5 text-gold" />
               Identity Documents
             </h2>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Aadhar Card */}
-              <div className="border border-gray-200 rounded-lg p-4">
-                <h3 className="font-medium text-gray-900 mb-3">Aadhar Card</h3>
+              <div className="border border-bg-elevated rounded-lg p-4 bg-bg-elevated">
+                <h3 className="font-medium text-white mb-3">Aadhar Card</h3>
                 
                 {user?.aadharCardUrl ? (
                   <div className="space-y-3">
@@ -256,7 +256,7 @@ export default function SettingsPage() {
                         className="hidden"
                         disabled={uploadingAadhar}
                       />
-                      <span className="inline-flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors text-sm">
+                      <span className="inline-flex items-center gap-2 px-4 py-2 border border-bg-elevated rounded-lg cursor-pointer hover:bg-bg-card hover:border-gold/50 transition-all text-sm text-gray-300">
                         <Upload className="size-4" />
                         Replace Document
                       </span>
@@ -274,14 +274,14 @@ export default function SettingsPage() {
                       className="hidden"
                       disabled={uploadingAadhar}
                     />
-                    <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-primary-blue hover:bg-blue-50 transition-colors cursor-pointer">
+                    <div className="border-2 border-dashed border-bg-elevated rounded-lg p-8 text-center hover:border-gold hover:bg-bg-card transition-all cursor-pointer">
                       {uploadingAadhar ? (
-                        <Loader2 className="size-8 animate-spin text-primary-blue mx-auto" />
+                        <Loader2 className="size-8 animate-spin text-gold mx-auto" />
                       ) : (
                         <>
-                          <Upload className="size-8 text-gray-400 mx-auto mb-2" />
-                          <p className="text-sm text-gray-600">Click to upload Aadhar</p>
-                          <p className="text-xs text-gray-400 mt-1">PNG, JPG or PDF</p>
+                          <Upload className="size-8 text-gold mx-auto mb-2" />
+                          <p className="text-sm text-gray-300">Click to upload Aadhar</p>
+                          <p className="text-xs text-gray-500 mt-1">PNG, JPG or PDF</p>
                         </>
                       )}
                     </div>
@@ -290,8 +290,8 @@ export default function SettingsPage() {
               </div>
 
               {/* PAN Card */}
-              <div className="border border-gray-200 rounded-lg p-4">
-                <h3 className="font-medium text-gray-900 mb-3">PAN Card</h3>
+              <div className="border border-bg-elevated rounded-lg p-4 bg-bg-elevated">
+                <h3 className="font-medium text-white mb-3">PAN Card</h3>
                 
                 {user?.panCardUrl ? (
                   <div className="space-y-3">
@@ -307,7 +307,7 @@ export default function SettingsPage() {
                         className="hidden"
                         disabled={uploadingPan}
                       />
-                      <span className="inline-flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors text-sm">
+                      <span className="inline-flex items-center gap-2 px-4 py-2 border border-bg-elevated rounded-lg cursor-pointer hover:bg-bg-card hover:border-gold/50 transition-all text-sm text-gray-300">
                         <Upload className="size-4" />
                         Replace Document
                       </span>
@@ -325,14 +325,14 @@ export default function SettingsPage() {
                       className="hidden"
                       disabled={uploadingPan}
                     />
-                    <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-primary-blue hover:bg-blue-50 transition-colors cursor-pointer">
+                    <div className="border-2 border-dashed border-bg-elevated rounded-lg p-8 text-center hover:border-gold hover:bg-bg-card transition-all cursor-pointer">
                       {uploadingPan ? (
-                        <Loader2 className="size-8 animate-spin text-primary-blue mx-auto" />
+                        <Loader2 className="size-8 animate-spin text-gold mx-auto" />
                       ) : (
                         <>
-                          <Upload className="size-8 text-gray-400 mx-auto mb-2" />
-                          <p className="text-sm text-gray-600">Click to upload PAN</p>
-                          <p className="text-xs text-gray-400 mt-1">PNG, JPG or PDF</p>
+                          <Upload className="size-8 text-gold mx-auto mb-2" />
+                          <p className="text-sm text-gray-300">Click to upload PAN</p>
+                          <p className="text-xs text-gray-500 mt-1">PNG, JPG or PDF</p>
                         </>
                       )}
                     </div>

@@ -46,7 +46,7 @@ export default function PickupDropoff() {
   };
 
   return (
-    <div className="bg-white rounded-lg p-6 shadow-sm">
+    <div className="bg-bg-card border border-bg-elevated rounded-lg p-6 shadow-lg">
       <div className="flex flex-col lg:flex-row items-center gap-6">
         {/* Pick-Up Section */}
         <div className="flex-1 w-full">
@@ -57,9 +57,9 @@ export default function PickupDropoff() {
               name="rental-type"
               checked={selectedOption === 'pickup'}
               onChange={() => setSelectedOption('pickup')}
-              className="w-4 h-4 text-primary-blue accent-primary-blue cursor-pointer"
+              className="w-4 h-4 text-gold accent-gold cursor-pointer"
             />
-            <label htmlFor="pickup" className="font-semibold text-gray-900 cursor-pointer">
+            <label htmlFor="pickup" className="font-semibold text-white cursor-pointer">
               Pick - Up
             </label>
           </div>
@@ -67,17 +67,17 @@ export default function PickupDropoff() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {/* Location */}
             <div>
-              <label className="block text-sm font-bold text-gray-900 mb-2">
+              <label className="block text-sm font-bold text-gray-300 mb-2">
                 Locations
               </label>
               <select
                 value={pickup.location}
                 onChange={(e) => setPickup({ ...pickup, location: e.target.value })}
-                className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-blue text-gray-600 text-sm bg-white cursor-pointer"
+                className="w-full px-4 py-3 bg-bg-elevated border border-bg-elevated rounded-lg focus:outline-none focus:ring-2 focus:ring-gold text-white text-sm cursor-pointer hover:border-gold/50 transition-colors"
               >
-                <option value="">Select your city</option>
+                <option value="" className="bg-bg-elevated text-gray-400">Select your city</option>
                 {locations.map((location) => (
-                  <option key={location} value={location}>
+                  <option key={location} value={location} className="bg-bg-elevated text-white">
                     {location}
                   </option>
                 ))}
@@ -86,30 +86,30 @@ export default function PickupDropoff() {
 
             {/* Date */}
             <div>
-              <label className="block text-sm font-bold text-gray-900 mb-2">
+              <label className="block text-sm font-bold text-gray-300 mb-2">
                 Date
               </label>
               <input
                 type="date"
                 value={pickup.date}
                 onChange={(e) => setPickup({ ...pickup, date: e.target.value })}
-                className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-blue text-gray-600 text-sm cursor-pointer"
+                className="w-full px-4 py-3 bg-bg-elevated border border-bg-elevated rounded-lg focus:outline-none focus:ring-2 focus:ring-gold text-white text-sm cursor-pointer hover:border-gold/50 transition-colors scheme-dark"
               />
             </div>
 
             {/* Time */}
             <div>
-              <label className="block text-sm font-bold text-gray-900 mb-2">
+              <label className="block text-sm font-bold text-gray-300 mb-2">
                 Time
               </label>
               <select
                 value={pickup.time}
                 onChange={(e) => setPickup({ ...pickup, time: e.target.value })}
-                className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-blue text-gray-600 text-sm bg-white cursor-pointer"
+                className="w-full px-4 py-3 bg-bg-elevated border border-bg-elevated rounded-lg focus:outline-none focus:ring-2 focus:ring-gold text-white text-sm cursor-pointer hover:border-gold/50 transition-colors"
               >
-                <option value="">Select your time</option>
+                <option value="" className="bg-bg-elevated text-gray-400">Select your time</option>
                 {times.map((time) => (
-                  <option key={time} value={time}>
+                  <option key={time} value={time} className="bg-bg-elevated text-white">
                     {time}
                   </option>
                 ))}
@@ -122,7 +122,7 @@ export default function PickupDropoff() {
         <div className="shrink-0 lg:mt-8">
           <button
             onClick={handleSwap}
-            className="bg-primary-blue hover:bg-[#264ac6] text-white p-4 rounded-lg transition-colors shadow-md"
+            className="bg-gold hover:bg-gold-light text-black p-4 rounded-lg transition-all duration-300 shadow-lg shadow-gold/30 hover:shadow-gold-light/40 hover:scale-105"
             aria-label="Swap pickup and dropoff"
           >
             <ArrowUpDown className="size-5" />
@@ -138,9 +138,9 @@ export default function PickupDropoff() {
               name="rental-type"
               checked={selectedOption === 'dropoff'}
               onChange={() => setSelectedOption('dropoff')}
-              className="w-4 h-4 text-primary-blue accent-primary-blue cursor-pointer"
+              className="w-4 h-4 text-gold accent-gold cursor-pointer"
             />
-            <label htmlFor="dropoff" className="font-semibold text-gray-900 cursor-pointer">
+            <label htmlFor="dropoff" className="font-semibold text-white cursor-pointer">
               Drop - Off
             </label>
           </div>
@@ -148,17 +148,17 @@ export default function PickupDropoff() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {/* Location */}
             <div>
-              <label className="block text-sm font-bold text-gray-900 mb-2">
+              <label className="block text-sm font-bold text-gray-300 mb-2">
                 Locations
               </label>
               <select
                 value={dropoff.location}
                 onChange={(e) => setDropoff({ ...dropoff, location: e.target.value })}
-                className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-blue text-gray-600 text-sm bg-white cursor-pointer"
+                className="w-full px-4 py-3 bg-bg-elevated border border-bg-elevated rounded-lg focus:outline-none focus:ring-2 focus:ring-gold text-white text-sm cursor-pointer hover:border-gold/50 transition-colors"
               >
-                <option value="">Select your city</option>
+                <option value="" className="bg-bg-elevated text-gray-400">Select your city</option>
                 {locations.map((location) => (
-                  <option key={location} value={location}>
+                  <option key={location} value={location} className="bg-bg-elevated text-white">
                     {location}
                   </option>
                 ))}
@@ -167,30 +167,30 @@ export default function PickupDropoff() {
 
             {/* Date */}
             <div>
-              <label className="block text-sm font-bold text-gray-900 mb-2">
+              <label className="block text-sm font-bold text-gray-300 mb-2">
                 Date
               </label>
               <input
                 type="date"
                 value={dropoff.date}
                 onChange={(e) => setDropoff({ ...dropoff, date: e.target.value })}
-                className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-blue text-gray-600 text-sm cursor-pointer"
+                className="w-full px-4 py-3 bg-bg-elevated border border-bg-elevated rounded-lg focus:outline-none focus:ring-2 focus:ring-gold text-white text-sm cursor-pointer hover:border-gold/50 transition-colors scheme-dark"
               />
             </div>
 
             {/* Time */}
             <div>
-              <label className="block text-sm font-bold text-gray-900 mb-2">
+              <label className="block text-sm font-bold text-gray-300 mb-2">
                 Time
               </label>
               <select
                 value={dropoff.time}
                 onChange={(e) => setDropoff({ ...dropoff, time: e.target.value })}
-                className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-blue text-gray-600 text-sm bg-white cursor-pointer"
+                className="w-full px-4 py-3 bg-bg-elevated border border-bg-elevated rounded-lg focus:outline-none focus:ring-2 focus:ring-gold text-white text-sm cursor-pointer hover:border-gold/50 transition-colors"
               >
-                <option value="">Select your time</option>
+                <option value="" className="bg-bg-elevated text-gray-400">Select your time</option>
                 {times.map((time) => (
-                  <option key={time} value={time}>
+                  <option key={time} value={time} className="bg-bg-elevated text-white">
                     {time}
                   </option>
                 ))}

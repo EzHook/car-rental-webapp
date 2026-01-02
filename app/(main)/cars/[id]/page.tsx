@@ -99,7 +99,6 @@ export default function CarDetailsPage() {
 
   const handleRentNow = () => {
     if (!isAuthenticated) {
-      // Show login modal or redirect to login
       if (confirm('You need to login to rent a car. Go to login page?')) {
         router.push(`/login?redirect=/cars/${carId}`);
       }
@@ -111,7 +110,6 @@ export default function CarDetailsPage() {
       return;
     }
 
-    // Navigate to payment page with car ID
     router.push(`/payment/${carId}`);
   };
 
@@ -153,7 +151,6 @@ export default function CarDetailsPage() {
       setReviewComment('');
       setReviewRating(5);
       
-      // Refresh reviews
       fetchCarDetails();
     } catch (error: any) {
       alert(error.message);
@@ -172,23 +169,23 @@ export default function CarDetailsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="size-12 animate-spin text-primary-blue" />
+      <div className="min-h-screen bg-bg-main flex items-center justify-center">
+        <Loader2 className="size-12 animate-spin text-gold" />
       </div>
     );
   }
 
   if (error || !car) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen bg-bg-main flex items-center justify-center">
         <div className="text-center">
           <AlertCircle className="size-16 text-red-500 mx-auto mb-4" />
-          <h1 className="text-2xl font-bold text-gray-900 mb-4">
+          <h1 className="text-2xl font-bold text-white mb-4">
             {error || 'Car not found'}
           </h1>
           <button
             onClick={() => router.push('/dashboard')}
-            className="text-primary-blue hover:underline"
+            className="text-gold hover:text-gold-light hover:underline transition-colors"
           >
             Go back to dashboard
           </button>
@@ -200,11 +197,11 @@ export default function CarDetailsPage() {
   const carImages = [car.image_url, car.image_url, car.image_url];
 
   return (
-    <div className="px-6 lg:px-16 py-8">
+    <div className="min-h-screen bg-bg-main px-6 lg:px-16 py-8">
       {/* Back Button */}
       <button
         onClick={() => router.back()}
-        className="flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-6 transition-colors"
+        className="flex items-center gap-2 text-gray-400 hover:text-gold mb-6 transition-colors"
       >
         <ArrowLeft className="size-5" />
         <span className="font-semibold">Back</span>
@@ -215,15 +212,15 @@ export default function CarDetailsPage() {
         {/* Left Side - Image Gallery */}
         <div className="space-y-4">
           {/* Main Image */}
-          <div className="relative bg-linear-to-br from-[#54a6ff] to-[#1e3a8a] rounded-xl overflow-hidden">
+          <div className="relative bg-linear-to-br from-bg-elevated to-bg-secondary rounded-xl overflow-hidden border border-bg-elevated">
             <div className="p-8">
               <div className="mb-4">
                 <h3 className="text-white text-2xl lg:text-3xl font-semibold mb-2">
                   {car.name}
                 </h3>
-                <p className="text-white/90 text-sm">
+                {/* <p className="text-gray-300 text-sm">
                   {car.description || 'Comfort and luxury combined in one vehicle'}
-                </p>
+                </p> */}
               </div>
               <div className="relative h-64 lg:h-80">
                 <Image
@@ -243,10 +240,10 @@ export default function CarDetailsPage() {
               <button
                 key={index}
                 onClick={() => setSelectedImageIndex(index)}
-                className={`relative aspect-video bg-white rounded-lg overflow-hidden border-2 transition-all ${
+                className={`relative aspect-video bg-bg-card rounded-lg overflow-hidden border-2 transition-all ${
                   selectedImageIndex === index
-                    ? 'border-primary-blue ring-2 ring-primary-blue/20'
-                    : 'border-gray-200 hover:border-gray-300'
+                    ? 'border-gold ring-2 ring-gold/20'
+                    : 'border-bg-elevated hover:border-gold/50'
                 }`}
               >
                 <Image
@@ -265,7 +262,7 @@ export default function CarDetailsPage() {
           {/* Title and Like Button */}
           <div className="flex items-start justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">{car.name}</h1>
+              <h1 className="text-3xl font-bold text-white mb-2">{car.name}</h1>
               {/* Rating */}
               <div className="flex items-center gap-2">
                 <div className="flex items-center">
@@ -274,31 +271,31 @@ export default function CarDetailsPage() {
                       key={star}
                       className={`size-5 ${
                         star <= Math.round(avgRating)
-                          ? 'fill-yellow-400 text-yellow-400'
-                          : 'fill-gray-300 text-gray-300'
+                          ? 'fill-gold text-gold'
+                          : 'fill-gray-600 text-gray-600'
                       }`}
                     />
                   ))}
                 </div>
-                <span className="text-sm text-gray-600">
+                <span className="text-sm text-gray-400">
                   {avgRating.toFixed(1)} ({reviewCount} Review{reviewCount !== 1 ? 's' : ''})
                 </span>
               </div>
             </div>
             <button
               onClick={() => setIsLiked(!isLiked)}
-              className="p-2 hover:bg-gray-50 rounded-full transition-colors"
+              className="p-2 hover:bg-bg-elevated rounded-full transition-colors"
             >
               <Heart
                 className={`size-6 ${
-                  isLiked ? 'fill-red-500 text-red-500' : 'text-gray-400'
+                  isLiked ? 'fill-gold text-gold' : 'text-gray-500 hover:text-gold'
                 }`}
               />
             </button>
           </div>
 
           {/* Description */}
-          <p className="text-gray-600 leading-relaxed">
+          <p className="text-gray-300 leading-relaxed">
             {car.description || 'Experience luxury and performance with this amazing vehicle.'}
           </p>
 
@@ -306,8 +303,8 @@ export default function CarDetailsPage() {
           <div>
             <span className={`inline-block px-3 py-1 rounded-full text-sm font-semibold ${
               car.is_available 
-                ? 'bg-green-100 text-green-800' 
-                : 'bg-red-100 text-red-800'
+                ? 'bg-green-900/30 text-green-400 border border-green-700' 
+                : 'bg-red-900/30 text-red-400 border border-red-700'
             }`}>
               {car.is_available ? '✓ Available' : '✗ Not Available'}
             </span>
@@ -315,21 +312,21 @@ export default function CarDetailsPage() {
 
           {/* Specifications */}
           <div className="grid grid-cols-2 gap-4">
-            <div>
-              <span className="text-gray-400 text-sm">Type Car</span>
-              <p className="text-gray-700 font-semibold">{car.type}</p>
+            <div className="bg-bg-card p-4 rounded-lg border border-bg-elevated">
+              <span className="text-gray-500 text-sm block mb-1">Type Car</span>
+              <p className="text-white font-semibold">{car.type}</p>
             </div>
-            <div>
-              <span className="text-gray-400 text-sm">Capacity</span>
-              <p className="text-gray-700 font-semibold">{car.capacity} Person</p>
+            <div className="bg-bg-card p-4 rounded-lg border border-bg-elevated">
+              <span className="text-gray-500 text-sm block mb-1">Capacity</span>
+              <p className="text-white font-semibold">{car.capacity} Person</p>
             </div>
-            <div>
-              <span className="text-gray-400 text-sm">Transmission</span>
-              <p className="text-gray-700 font-semibold">{car.transmission}</p>
+            <div className="bg-bg-card p-4 rounded-lg border border-bg-elevated">
+              <span className="text-gray-500 text-sm block mb-1">Transmission</span>
+              <p className="text-white font-semibold">{car.transmission}</p>
             </div>
-            <div>
-              <span className="text-gray-400 text-sm">Fuel Capacity</span>
-              <p className="text-gray-700 font-semibold">{car.fuel_capacity}</p>
+            <div className="bg-bg-card p-4 rounded-lg border border-bg-elevated">
+              <span className="text-gray-500 text-sm block mb-1">Fuel Capacity</span>
+              <p className="text-white font-semibold">{car.fuel_capacity}</p>
             </div>
           </div>
 
@@ -337,13 +334,13 @@ export default function CarDetailsPage() {
           <div className="flex items-center justify-between pt-4">
             <div>
               <div className="flex items-baseline gap-1">
-                <span className="text-3xl font-bold text-gray-900">
-                ₹{car.price.toFixed(2)}
+                <span className="text-3xl font-bold text-white">
+                  ₹{car.price.toFixed(2)}
                 </span>
                 <span className="text-gray-400">/ day</span>
               </div>
               {car.original_price && (
-                <span className="text-gray-400 line-through text-sm">
+                <span className="text-gray-500 line-through text-sm">
                   ₹{car.original_price.toFixed(2)}
                 </span>
               )}
@@ -351,10 +348,10 @@ export default function CarDetailsPage() {
             <button
               onClick={handleRentNow}
               disabled={!car.is_available}
-              className={`px-8 py-3 rounded-lg font-semibold transition-colors ${
+              className={`px-8 py-3 rounded-lg font-bold transition-all duration-300 ${
                 car.is_available
-                  ? 'bg-primary-blue hover:bg-[#264ac6] text-white'
-                  : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                  ? 'bg-gold hover:bg-gold-light text-black shadow-lg shadow-gold/30 hover:shadow-gold-light/40 hover:scale-105'
+                  : 'bg-gray-700 text-gray-500 cursor-not-allowed'
               }`}
             >
               {car.is_available ? 'Rent Now' : 'Not Available'}
@@ -364,17 +361,17 @@ export default function CarDetailsPage() {
       </div>
 
       {/* Reviews Section */}
-      <div className="bg-white rounded-lg p-6 mb-8">
+      <div className="bg-bg-card border border-bg-elevated rounded-lg p-6 mb-8">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-2">
-            <h2 className="text-xl font-semibold text-gray-900">Reviews</h2>
-            <span className="bg-primary-blue text-white text-sm font-bold px-3 py-1 rounded">
+            <h2 className="text-xl font-semibold text-white">Reviews</h2>
+            <span className="bg-gold text-black text-sm font-bold px-3 py-1 rounded">
               {reviewCount}
             </span>
           </div>
           <button
             onClick={handleWriteReview}
-            className="px-4 py-2 bg-primary-blue text-white rounded-lg font-semibold hover:bg-[#264ac6] transition-colors"
+            className="px-4 py-2 bg-gold text-black rounded-lg font-bold hover:bg-gold-light transition-all duration-300 shadow-lg shadow-gold/30"
           >
             Write a Review
           </button>
@@ -382,12 +379,12 @@ export default function CarDetailsPage() {
 
         {/* Review Form */}
         {showReviewForm && (
-          <div className="mb-6 p-4 bg-gray-50 rounded-lg">
-            <h3 className="font-semibold text-gray-900 mb-4">Write Your Review</h3>
+          <div className="mb-6 p-4 bg-bg-elevated rounded-lg border border-bg-elevated">
+            <h3 className="font-semibold text-white mb-4">Write Your Review</h3>
             
             {/* Star Rating */}
             <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-2">Rating</label>
+              <label className="block text-sm font-medium text-gray-300 mb-2">Rating</label>
               <div className="flex items-center gap-2">
                 {[1, 2, 3, 4, 5].map((star) => (
                   <button
@@ -398,8 +395,8 @@ export default function CarDetailsPage() {
                     <Star
                       className={`size-8 cursor-pointer transition-colors ${
                         star <= reviewRating
-                          ? 'fill-yellow-400 text-yellow-400'
-                          : 'fill-gray-300 text-gray-300'
+                          ? 'fill-gold text-gold'
+                          : 'fill-gray-600 text-gray-600'
                       }`}
                     />
                   </button>
@@ -409,14 +406,14 @@ export default function CarDetailsPage() {
 
             {/* Comment */}
             <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-300 mb-2">
                 Your Review (minimum 10 characters)
               </label>
               <textarea
                 value={reviewComment}
                 onChange={(e) => setReviewComment(e.target.value)}
                 rows={4}
-                className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-blue resize-none"
+                className="w-full px-4 py-2 bg-bg-card border border-bg-elevated rounded-lg focus:outline-none focus:ring-2 focus:ring-gold resize-none text-white placeholder:text-gray-500"
                 placeholder="Share your experience with this car..."
               />
             </div>
@@ -426,14 +423,14 @@ export default function CarDetailsPage() {
               <button
                 onClick={handleSubmitReview}
                 disabled={submittingReview || reviewComment.trim().length < 10}
-                className="px-4 py-2 bg-primary-blue text-white rounded-lg font-semibold hover:bg-[#264ac6] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                className="px-4 py-2 bg-gold text-black rounded-lg font-bold hover:bg-gold-light transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 shadow-lg shadow-gold/30"
               >
                 {submittingReview && <Loader2 className="size-4 animate-spin" />}
                 Submit Review
               </button>
               <button
                 onClick={() => setShowReviewForm(false)}
-                className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg font-semibold hover:bg-gray-300 transition-colors"
+                className="px-4 py-2 bg-bg-elevated text-gray-300 rounded-lg font-semibold hover:bg-bg-card transition-colors"
               >
                 Cancel
               </button>
@@ -445,11 +442,11 @@ export default function CarDetailsPage() {
         <div className="space-y-6">
           {reviews.length > 0 ? (
             reviews.map((review) => (
-              <div key={review.id} className="flex gap-4 pb-6 border-b border-gray-200 last:border-0">
+              <div key={review.id} className="flex gap-4 pb-6 border-b border-bg-elevated last:border-0">
                 {/* Avatar */}
                 <div className="shrink-0">
-                  <div className="size-14 rounded-full bg-primary-blue/10 flex items-center justify-center">
-                    <span className="text-xl font-bold text-primary-blue">
+                  <div className="size-14 rounded-full bg-gold/20 flex items-center justify-center border border-gold/30">
+                    <span className="text-xl font-bold text-gold">
                       {review.user_name.charAt(0).toUpperCase()}
                     </span>
                   </div>
@@ -459,10 +456,10 @@ export default function CarDetailsPage() {
                 <div className="flex-1">
                   <div className="flex items-start justify-between mb-2">
                     <div>
-                      <h3 className="font-bold text-gray-900">{review.user_name}</h3>
+                      <h3 className="font-bold text-white">{review.user_name}</h3>
                     </div>
                     <div className="text-right">
-                      <p className="text-sm text-gray-500 mb-1">
+                      <p className="text-sm text-gray-400 mb-1">
                         {new Date(review.created_at).toLocaleDateString('en-US', {
                           day: 'numeric',
                           month: 'long',
@@ -475,22 +472,22 @@ export default function CarDetailsPage() {
                             key={star}
                             className={`size-4 ${
                               star <= review.rating
-                                ? 'fill-yellow-400 text-yellow-400'
-                                : 'fill-gray-300 text-gray-300'
+                                ? 'fill-gold text-gold'
+                                : 'fill-gray-600 text-gray-600'
                             }`}
                           />
                         ))}
                       </div>
                     </div>
                   </div>
-                  <p className="text-gray-600 text-sm leading-relaxed">
+                  <p className="text-gray-300 text-sm leading-relaxed">
                     {review.comment}
                   </p>
                 </div>
               </div>
             ))
           ) : (
-            <div className="text-center py-8 text-gray-500">
+            <div className="text-center py-8 text-gray-400">
               <p>No reviews yet. Be the first to review this car!</p>
             </div>
           )}
@@ -501,10 +498,10 @@ export default function CarDetailsPage() {
       {recommendedCars.length > 0 && (
         <div className="mt-8">
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl font-semibold text-gray-900">Recommended Cars</h2>
+            <h2 className="text-xl font-semibold text-white">Recommended Cars</h2>
             <button 
               onClick={() => router.push('/dashboard')}
-              className="text-primary-blue hover:underline text-sm font-semibold"
+              className="text-gold hover:text-gold-light hover:underline text-sm font-semibold transition-colors"
             >
               View All
             </button>

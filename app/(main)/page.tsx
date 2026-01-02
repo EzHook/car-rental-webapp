@@ -28,7 +28,7 @@ export default function DashboardPage() {
   const [filters, setFilters] = useState({
     type: [] as string[],
     capacity: [] as string[],
-    maxPrice: 1000, // Increased default max price
+    maxPrice: 1000,
   });
 
   useEffect(() => {
@@ -76,15 +76,12 @@ export default function DashboardPage() {
 
   // Filter cars based on applied filters
   const filteredCars = cars.filter(car => {
-    // Only show available cars
     if (!car.is_available) return false;
 
-    // Type filter - only apply if types are selected
     if (filters.type.length > 0 && !filters.type.includes(car.type)) {
       return false;
     }
 
-    // Capacity filter - only apply if capacities are selected
     if (filters.capacity.length > 0) {
       const hasMatchingCapacity = filters.capacity.some(cap => {
         if (cap === '2 Person') return car.capacity === 2;
@@ -96,7 +93,6 @@ export default function DashboardPage() {
       if (!hasMatchingCapacity) return false;
     }
 
-    // Price filter - always apply but with high default
     if (car.price > filters.maxPrice) {
       return false;
     }
@@ -110,7 +106,7 @@ export default function DashboardPage() {
     .slice(0, 4);
 
   return (
-    <div className="flex gap-0">
+    <div className="flex gap-0 bg-bg-main min-h-screen">
       <FilterSidebar
         isOpen={isFilterOpen}
         onClose={() => setIsFilterOpen(false)}
@@ -127,8 +123,8 @@ export default function DashboardPage() {
             buttonText="Rental Car"
             onButtonClick={handleRentalClick}
             carImage="/cars/ertiga.png"
-            backgroundGradient="from-[#54a6ff] to-[#1e3a8a]"
-            buttonColor="bg-[#3563e9] hover:bg-[#264ac6]"
+            backgroundGradient="from-bg-secondary to-bg-main"
+            buttonColor="bg-gold hover:bg-gold-dark text-black font-semibold"
           />
 
           <HeroCard
@@ -137,8 +133,8 @@ export default function DashboardPage() {
             buttonText="Rental Car"
             onButtonClick={handleEasyRentClick}
             carImage="/cars/i20.png"
-            backgroundGradient="from-[#3d5afe] to-[#0d47a1]"
-            buttonColor="bg-[#54a6ff] hover:bg-[#3d8fff]"
+            backgroundGradient="from-bg-elevated to-bg-secondary"
+            buttonColor="bg-gold-light hover:bg-gold text-black font-semibold"
           />
         </div>
 
@@ -146,17 +142,17 @@ export default function DashboardPage() {
 
         {loading && (
           <div className="flex items-center justify-center py-20">
-            <Loader2 className="size-12 animate-spin text-primary-blue" />
+            <Loader2 className="size-12 animate-spin text-gold" />
           </div>
         )}
 
         {error && (
-          <div className="bg-red-50 border border-red-200 rounded-lg p-6 text-center my-8">
-            <p className="text-red-800 font-semibold mb-2">Failed to load cars</p>
-            <p className="text-red-600 text-sm mb-4">{error}</p>
+          <div className="bg-red-950 border border-red-800 rounded-lg p-6 text-center my-8">
+            <p className="text-red-200 font-semibold mb-2">Failed to load cars</p>
+            <p className="text-red-300 text-sm mb-4">{error}</p>
             <button
               onClick={fetchCars}
-              className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+              className="px-4 py-2 bg-gold text-black rounded-lg hover:bg-gold-dark transition-colors font-semibold"
             >
               Try Again
             </button>
@@ -168,24 +164,22 @@ export default function DashboardPage() {
             {/* Popular Cars Section */}
             <div className="mt-8" id="cars-section">
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-xl font-semibold text-gray-900">Popular Cars</h2>
+                <h2 className="text-xl font-semibold text-white">Popular Cars</h2>
                 <button 
                   onClick={() => {
                     const allCarsSection = document.getElementById('all-cars-section');
                     allCarsSection?.scrollIntoView({ behavior: 'smooth' });
                   }}
-                  className="text-primary-blue hover:underline text-sm font-semibold"
+                  className="text-gold hover:text-gold-light hover:underline text-sm font-semibold transition-colors"
                 >
                   View All
                 </button>
               </div>
 
               {popularCars.length > 0 ? (
-                <div
-                  className={`grid grid-cols-1 md:grid-cols-2 gap-6 transition-all duration-300 ${
-                    isFilterOpen ? 'lg:grid-cols-3' : 'lg:grid-cols-4'
-                  }`}
-                >
+                <div className={`grid grid-cols-1 md:grid-cols-2 gap-6 transition-all duration-300 ${
+                  isFilterOpen ? 'lg:grid-cols-3' : 'lg:grid-cols-4'
+                }`}>
                   {popularCars.map((car) => (
                     <CarCard
                       key={car.id}
@@ -204,8 +198,8 @@ export default function DashboardPage() {
                   ))}
                 </div>
               ) : (
-                <div className="text-center py-12 bg-gray-50 rounded-lg">
-                  <p className="text-gray-500">No popular cars available at the moment</p>
+                <div className="text-center py-12 bg-bg-secondary rounded-lg border border-bg-elevated">
+                  <p className="text-gray-400">No popular cars available at the moment</p>
                 </div>
               )}
             </div>
@@ -213,13 +207,13 @@ export default function DashboardPage() {
             {/* All Cars Section */}
             <div className="mt-12" id="all-cars-section">
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-xl font-semibold text-gray-900">
+                <h2 className="text-xl font-semibold text-white">
                   All Cars {filters.type.length > 0 || filters.capacity.length > 0 ? '(Filtered)' : ''}
                 </h2>
                 {(filters.type.length > 0 || filters.capacity.length > 0) && (
                   <button
                     onClick={() => setFilters({ type: [], capacity: [], maxPrice: 1000 })}
-                    className="text-red-600 hover:underline text-sm font-semibold"
+                    className="text-gold hover:text-gold-light hover:underline text-sm font-semibold transition-colors"
                   >
                     Clear Filters
                   </button>
@@ -227,11 +221,9 @@ export default function DashboardPage() {
               </div>
 
               {filteredCars.length > 0 ? (
-                <div
-                  className={`grid grid-cols-1 md:grid-cols-2 gap-6 transition-all duration-300 ${
-                    isFilterOpen ? 'lg:grid-cols-3' : 'lg:grid-cols-4'
-                  }`}
-                >
+                <div className={`grid grid-cols-1 md:grid-cols-2 gap-6 transition-all duration-300 ${
+                  isFilterOpen ? 'lg:grid-cols-3' : 'lg:grid-cols-4'
+                }`}>
                   {filteredCars.map((car) => (
                     <CarCard
                       key={car.id}
@@ -250,11 +242,11 @@ export default function DashboardPage() {
                   ))}
                 </div>
               ) : (
-                <div className="text-center py-12 bg-gray-50 rounded-lg">
-                  <p className="text-gray-500 mb-2">No cars match your filters</p>
+                <div className="text-center py-12 bg-bg-secondary rounded-lg border border-bg-elevated">
+                  <p className="text-gray-400 mb-2">No cars match your filters</p>
                   <button
                     onClick={() => setFilters({ type: [], capacity: [], maxPrice: 1000 })}
-                    className="text-primary-blue hover:underline text-sm font-semibold"
+                    className="text-gold hover:text-gold-light hover:underline text-sm font-semibold transition-colors"
                   >
                     Clear all filters
                   </button>
@@ -263,7 +255,7 @@ export default function DashboardPage() {
 
               {filteredCars.length > 12 && (
                 <div className="text-center mt-8">
-                  <button className="px-6 py-3 bg-primary-blue text-white rounded-lg font-semibold hover:bg-[#264ac6] transition-colors">
+                  <button className="px-6 py-3 bg-gold text-black rounded-lg font-semibold hover:bg-gold-light transition-all duration-300 shadow-lg shadow-gold/20 hover:shadow-gold-light/30 hover:scale-105">
                     Show More Cars
                   </button>
                 </div>

@@ -77,24 +77,25 @@ function LoginContent() {
   return (
     <div className="min-h-screen grid lg:grid-cols-2">
       {/* Left Side - Login Form */}
-      <div className="flex items-center justify-center p-8 bg-white">
+      <div className="flex items-center justify-center p-8 bg-bg-main">
         <div className="w-full max-w-md space-y-8">
           <div>
-            <h1 className="text-4xl font-bold text-primary-blue mb-2">MORENT</h1>
-            <h2 className="text-2xl font-bold text-gray-900">Welcome Back</h2>
-            <p className="text-gray-600 mt-2">
+            <h1 className="text-4xl font-bold text-gold mb-2">MORENT</h1>
+            <h2 className="text-2xl font-bold text-white">Welcome Back</h2>
+            <p className="text-gray-400 mt-2">
               Sign in with your phone number using secure OTP verification
             </p>
           </div>
 
           {error && (
-            <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg text-sm">
+            <div className="bg-red-900/30 border border-red-700 text-red-300 px-4 py-3 rounded-lg text-sm">
               {error}
             </div>
           )}
 
           {loading && (
-            <div className="bg-blue-50 border border-blue-200 text-blue-600 px-4 py-3 rounded-lg text-sm">
+            <div className="bg-blue-900/30 border border-blue-700 text-blue-300 px-4 py-3 rounded-lg text-sm flex items-center gap-2">
+              <Loader2 className="size-4 animate-spin" />
               Verifying your phone number...
             </div>
           )}
@@ -103,30 +104,30 @@ function LoginContent() {
             <button
               onClick={openPhoneEmailAuth}
               disabled={loading}
-              className="w-full bg-primary-blue hover:bg-[#264ac6] text-white py-4 rounded-lg font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3 shadow-lg"
+              className="w-full bg-gold hover:bg-gold-light text-black py-4 rounded-lg font-bold transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3 shadow-lg shadow-gold/30 hover:shadow-gold-light/40 hover:scale-105"
             >
               <Phone className="size-6" />
               Sign In with Phone
             </button>
           </div>
 
-          <div className="bg-gray-50 rounded-lg p-6">
-            <h3 className="font-semibold text-gray-900 mb-3">How it works:</h3>
-            <ol className="space-y-2 text-sm text-gray-600">
+          <div className="bg-bg-card border border-bg-elevated rounded-lg p-6">
+            <h3 className="font-semibold text-white mb-3">How it works:</h3>
+            <ol className="space-y-2 text-sm text-gray-300">
               <li className="flex gap-2">
-                <span className="font-bold text-primary-blue">1.</span>
+                <span className="font-bold text-gold">1.</span>
                 <span>Click Sign In with Phone button</span>
               </li>
               <li className="flex gap-2">
-                <span className="font-bold text-primary-blue">2.</span>
+                <span className="font-bold text-gold">2.</span>
                 <span>Enter your phone number with country code</span>
               </li>
               <li className="flex gap-2">
-                <span className="font-bold text-primary-blue">3.</span>
+                <span className="font-bold text-gold">3.</span>
                 <span>Receive OTP on your phone via SMS</span>
               </li>
               <li className="flex gap-2">
-                <span className="font-bold text-primary-blue">4.</span>
+                <span className="font-bold text-gold">4.</span>
                 <span>Enter OTP to verify and login</span>
               </li>
             </ol>
@@ -135,11 +136,11 @@ function LoginContent() {
       </div>
 
       {/* Right Side - Hero Image */}
-      <div className="hidden lg:block relative bg-linear-to-br from-[#54a6ff] to-[#1e3a8a]">
+      <div className="hidden lg:block relative bg-linear-to-br from-bg-elevated to-bg-secondary">
         <div className="absolute inset-0 flex flex-col items-center justify-center p-12 text-white">
-          <h2 className="text-4xl font-bold mb-4">Start Your Journey</h2>
-          <p className="text-lg text-white/90 mb-8 text-center max-w-md">
-            Secure phone-based authentication powered by Phone.Email - 100% free SMS OTP
+          <h2 className="text-4xl font-bold mb-4 text-gold">Start Your Journey</h2>
+          <p className="text-lg text-gray-300 mb-8 text-center max-w-md">
+            Secure phone-based authentication
           </p>
           
           {/* Car Image */}
@@ -162,10 +163,10 @@ function LoginContent() {
 export default function LoginPage() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="min-h-screen flex items-center justify-center bg-bg-main">
         <div className="flex flex-col items-center gap-4">
-          <Loader2 className="size-8 animate-spin text-primary-blue" />
-          <p className="text-gray-600">Loading...</p>
+          <Loader2 className="size-8 animate-spin text-gold" />
+          <p className="text-gray-400">Loading...</p>
         </div>
       </div>
     }>
