@@ -80,7 +80,7 @@ function LoginContent() {
       <div className="flex items-center justify-center p-8 bg-bg-main">
         <div className="w-full max-w-md space-y-8">
           <div>
-            <h1 className="text-4xl font-bold text-gold mb-2">MORENT</h1>
+            <h1 className="text-4xl font-bold text-gold mb-2">RENTAL DRIVE</h1>
             <h2 className="text-2xl font-bold text-white">Welcome Back</h2>
             <p className="text-gray-400 mt-2">
               Sign in with your phone number using secure OTP verification

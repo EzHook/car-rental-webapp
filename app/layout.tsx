@@ -9,7 +9,7 @@ const plusJakartaSans = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
-  title: 'MORENT - Car Rental',
+  title: 'Rental Drive - Car Rental',
   description: 'Rent the best cars at the best prices',
 };
 
