@@ -82,9 +82,7 @@ export default function ContactPage() {
         <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-5"></div>
         <div className="relative z-10 px-6 lg:px-16 py-20 lg:py-28">
           <div className="max-w-4xl mx-auto text-center">
-            <div className="inline-block px-4 py-2 bg-gold/90 backdrop-blur-sm border border-gold/50 rounded-full mb-6 shadow-lg shadow-gold/30">
-              <span className="text-black font-semibold text-sm">📞 Get In Touch</span>
-            </div>
+
             <h1 className="text-4xl lg:text-6xl font-bold mb-6 bg-linear-to-r from-gold via-gold-light to-gold bg-clip-text text-transparent drop-shadow-2xl">
               Let's Talk About Your Next Journey
             </h1>
