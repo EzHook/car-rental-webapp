@@ -10,102 +10,65 @@ export default function Footer() {
           <div className="lg:col-span-4">
             <h2 className="text-3xl font-bold text-gold mb-4">RENTAL DRIVE</h2>
             <p className="text-gray-400 text-sm leading-relaxed max-w-xs">
-              Our vision is to provide convenience and help increase your sales business.
+              India's premier car rental service offering self-drive, pickup-dropoff, 
+              and chauffeur-driven solutions across 50+ cities.
             </p>
           </div>
 
-          {/* About Section */}
+          {/* Header Navigation Links - REPLACED */}
           <div className="lg:col-span-2">
-            <h3 className="text-white font-semibold text-lg mb-6">About</h3>
+            <h3 className="text-white font-semibold text-lg mb-6">Navigate</h3>
             <ul className="space-y-4">
               <li>
                 <Link 
-                  href="/how-it-works" 
+                  href="/" 
                   className="text-gray-400 hover:text-gold transition-colors text-sm"
                 >
-                  How it works
+                  Home
                 </Link>
               </li>
               <li>
                 <Link 
-                  href="/featured" 
+                  href="/about" 
                   className="text-gray-400 hover:text-gold transition-colors text-sm"
                 >
-                  Featured
+                  About Us
                 </Link>
               </li>
               <li>
                 <Link 
-                  href="/partnership" 
+                  href="/services" 
                   className="text-gray-400 hover:text-gold transition-colors text-sm"
                 >
-                  Partnership
+                  Services
                 </Link>
               </li>
               <li>
                 <Link 
-                  href="/business-relation" 
+                  href="/contact" 
                   className="text-gray-400 hover:text-gold transition-colors text-sm"
                 >
-                  Business Relation
+                  Contact Us
                 </Link>
               </li>
             </ul>
           </div>
 
-          {/* Community Section */}
-          <div className="lg:col-span-3">
-            <h3 className="text-white font-semibold text-lg mb-6">Community</h3>
+          {/* Keep other sections as placeholders or remove if not needed */}
+          {/* Community Section - Optional */}
+          <div className="lg:col-span-3 hidden lg:block">
+            <h3 className="text-white font-semibold text-lg mb-6">Company</h3>
             <ul className="space-y-4">
-              <li>
-                <Link 
-                  href="/events" 
-                  className="text-gray-400 hover:text-gold transition-colors text-sm"
-                >
-                  Events
-                </Link>
-              </li>
-              <li>
-                <Link 
-                  href="/blog" 
-                  className="text-gray-400 hover:text-gold transition-colors text-sm"
-                >
-                  Blog
-                </Link>
-              </li>
-              <li>
-                <Link 
-                  href="/podcast" 
-                  className="text-gray-400 hover:text-gold transition-colors text-sm"
-                >
-                  Podcast
-                </Link>
-              </li>
-              <li>
-                <Link 
-                  href="/invite" 
-                  className="text-gray-400 hover:text-gold transition-colors text-sm"
-                >
-                  Invite a friend
-                </Link>
-              </li>
+              <li><span className="text-gray-400 text-sm">24/7 Support</span></li>
+              <li><span className="text-gray-400 text-sm">Careers</span></li>
+              <li><span className="text-gray-400 text-sm">Press</span></li>
             </ul>
           </div>
 
           {/* Socials Section */}
           <div className="lg:col-span-3">
-            <h3 className="text-white font-semibold text-lg mb-6">Socials</h3>
+            <h3 className="text-white font-semibold text-lg mb-6">Follow Us</h3>
             <ul className="space-y-4">
-              <li>
-                <a 
-                  href="https://discord.com" 
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-gray-400 hover:text-gold transition-colors text-sm"
-                >
-                  Discord
-                </a>
-              </li>
               <li>
                 <a 
                   href="https://instagram.com" 
@@ -141,12 +104,12 @@ export default function Footer() {
         </div>
       </div>
 
-      {/* Bottom Bar */}
+      {/* Bottom Bar - Updated Year */}
       <div className="border-t border-bg-elevated">
         <div className="px-6 lg:px-16 py-8">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <p className="text-white font-semibold text-sm">
-              ©2022 MORENT. All rights reserved
+              ©2026 RENTAL DRIVE. All rights reserved
             </p>
             <div className="flex items-center gap-8">
               <Link 
