@@ -68,7 +68,6 @@ export default function AboutPage() {
         <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-5"></div>
         <div className="relative px-6 lg:px-16 py-20 lg:py-32 z-10">
           <div className="max-w-4xl mx-auto text-center">
-           
             <h1 className="text-4xl lg:text-6xl font-bold mb-6 bg-linear-to-r from-gold via-gold-light to-gold bg-clip-text text-transparent drop-shadow-2xl">
               Driving Dreams, Delivering Excellence
             </h1>
@@ -79,18 +78,18 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* Stats Section */}
-      <section className="relative px-6 lg:px-16 py-16 border-b border-gold/20 overflow-hidden">
+      {/* Stats Section - FIXED RESPONSIVE */}
+      <section className="relative px-4 sm:px-6 lg:px-16 py-12 sm:py-16 border-b border-gold/20 overflow-hidden">
         <div 
           className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-5"
           style={{ backgroundImage: "url('/cars/aboutCover1.jpg')" }}
         />
         <div className="max-w-7xl mx-auto relative z-10">
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-2 gap-4 sm:gap-6 lg:gap-8">
             {stats.map((stat, idx) => (
-              <div key={idx} className="text-center p-6 bg-bg-main/95 backdrop-blur-sm border border-gold/20 rounded-xl hover:border-gold/50 transition-all duration-300 hover:scale-105">
-                <div className="text-4xl lg:text-5xl font-bold text-gold mb-2">{stat.number}</div>
-                <div className="text-gray-400 font-semibold">{stat.label}</div>
+              <div key={idx} className="text-center p-4 sm:p-6 bg-bg-main/95 backdrop-blur-sm border border-gold/20 rounded-xl hover:border-gold/50 transition-all duration-300 hover:scale-105">
+                <div className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold text-gold mb-2 leading-none">{stat.number}</div>
+                <div className="text-xs sm:text-sm lg:text-base text-gray-400 font-semibold leading-tight">{stat.label}</div>
               </div>
             ))}
           </div>
@@ -211,7 +210,6 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* Rest of sections with your existing images */}
       {/* Leadership Team */}
       <section className="relative px-6 lg:px-16 py-20 overflow-hidden">
         <div className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-10" style={{ backgroundImage: "url('/cars/aboutCover2.jpg')" }} />
@@ -234,8 +232,6 @@ export default function AboutPage() {
           </div>
         </div>
       </section>
-
-      {/* Why Choose Us & CTA sections remain the same */}
     </div>
   );
 }

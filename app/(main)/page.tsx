@@ -115,22 +115,23 @@ export default function LandingPage() {
                 {currentSlide.description}
               </p>
 
-              {/* CTA Buttons */}
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              {/* CTA Buttons - FIXED CENTER ALIGNMENT */}
+              <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
                 <button
                   onClick={() => router.push('/login')}
-                  className="px-10 py-5 bg-gold text-black font-bold text-lg rounded-2xl hover:bg-gold-light transition-all duration-300 shadow-2xl shadow-gold/50 hover:shadow-gold/70 hover:-translate-y-1 w-full sm:w-auto group"
+                  className="group flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-3 px-8 sm:px-10 py-5 bg-gold text-black font-bold text-base sm:text-lg rounded-2xl hover:bg-gold-light transition-all duration-300 shadow-2xl shadow-gold/50 hover:shadow-gold/70 hover:-translate-y-1 w-full sm:w-auto min-h-15 text-center"
                 >
-                  <span className="flex items-center gap-2">
+                  <span className="flex items-center justify-center gap-2 sm:gap-3 w-full sm:w-auto">
                     Get Started Now
-                    <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-5 h-5 shrink-0 group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
                     </svg>
                   </span>
                 </button>
+                
                 <button
                   onClick={() => router.push('/login')}
-                  className="px-10 py-5 bg-black/30 backdrop-blur-xl border-2 border-white/50 text-white font-bold text-lg rounded-2xl hover:bg-white/10 hover:border-white/80 transition-all duration-300 hover:-translate-y-1 w-full sm:w-auto"
+                  className="px-8 sm:px-10 py-5 bg-black/30 backdrop-blur-xl border-2 border-white/50 text-white font-bold text-base sm:text-lg rounded-2xl hover:bg-white/10 hover:border-white/80 transition-all duration-300 hover:-translate-y-1 w-full sm:w-auto min-h-15 flex items-center justify-center"
                 >
                   Explore Cars
                 </button>
@@ -157,13 +158,6 @@ export default function LandingPage() {
               </div>
             ))}
           </div>
-          
-          {/* Slide Counter */}
-          {/* <div className="text-white/80 text-sm font-mono mt-2 flex gap-1 justify-center">
-            <span>{currentHero + 1}</span>
-            <span>/</span>
-            <span className="text-gold font-bold">{heroData.length}</span>
-          </div> */}
         </div>
       </section>
 
