@@ -11,7 +11,7 @@ interface Car {
   id: number;
   name: string;
   type: string;
-  image_url: string;
+  image_urls: string[];
   fuel_capacity: string;
   transmission: string;
   capacity: number;
@@ -186,7 +186,7 @@ export default function DashboardPage() {
                       id={car.id.toString()}
                       name={car.name}
                       type={car.type}
-                      image={car.image_url}
+                      image={car.image_urls[0]}
                       fuelCapacity={car.fuel_capacity}
                       transmission={car.transmission as 'Manual' | 'Automatic'}
                       capacity={car.capacity}
@@ -230,7 +230,7 @@ export default function DashboardPage() {
                       id={car.id.toString()}
                       name={car.name}
                       type={car.type}
-                      image={car.image_url}
+                      image={car.image_urls[0]}
                       fuelCapacity={car.fuel_capacity}
                       transmission={car.transmission as 'Manual' | 'Automatic'}
                       capacity={car.capacity}

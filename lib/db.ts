@@ -27,3 +27,16 @@ export async function initDB() {
     console.error('Database initialization error:', error);
   }
 }
+
+// 👇 ADD THIS - Type definition for contact submissions
+export interface ContactSubmission {
+  id: number;
+  name: string;
+  email: string;
+  phone: string | null;
+  service: string;
+  message: string;
+  status: string;
+  created_at: Date;
+  updated_at: Date;
+}

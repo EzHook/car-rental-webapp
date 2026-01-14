@@ -14,6 +14,7 @@ export default function ContactPage() {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
+  const [errorMessage, setErrorMessage] = useState('');
 
   const contactInfo = [
     {
@@ -39,9 +40,7 @@ export default function ContactPage() {
       icon: <Mail className="size-6" />,
       title: 'Email Us',
       details: [
-        'hello@rentaldrive.in',
-        'support@rentaldrive.in',
-        'bookings@rentaldrive.in'
+        'info@rentaldrive.in',
       ]
     },
     {
@@ -59,13 +58,33 @@ export default function ContactPage() {
     e.preventDefault();
     setIsSubmitting(true);
     setSubmitStatus('idle');
+    setErrorMessage('');
 
     try {
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      setSubmitStatus('success');
-      setFormData({ name: '', email: '', phone: '', service: '', message: '' });
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        setSubmitStatus('success');
+        setFormData({ name: '', email: '', phone: '', service: '', message: '' });
+        
+        // Scroll to success message
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } else {
+        setSubmitStatus('error');
+        setErrorMessage(data.error || 'Something went wrong. Please try again.');
+      }
     } catch (error) {
+      console.error('Form submission error:', error);
       setSubmitStatus('error');
+      setErrorMessage('Network error. Please check your connection and try again.');
     } finally {
       setIsSubmitting(false);
     }
@@ -73,56 +92,55 @@ export default function ContactPage() {
 
   return (
     <div className="min-h-screen bg-bg-main text-white">
-      {/* Hero Section - Title Background Image */}
+      {/* Hero Section */}
       <section className="relative bg-linear-to-br from-bg-main/70 via-bg-elevated/70 to-bg-main/70 border-b border-gold/20 overflow-hidden">
         <div 
           className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-25"
           style={{ backgroundImage: "url('/cars/contactCover.jpg')" }}
         />
         <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-5"></div>
-        <div className="relative z-10 px-6 lg:px-16 py-20 lg:py-28">
+        <div className="relative z-10 px-4 sm:px-6 lg:px-16 py-16 sm:py-20 lg:py-28">
           <div className="max-w-4xl mx-auto text-center">
-
-            <h1 className="text-4xl lg:text-6xl font-bold mb-6 bg-linear-to-r from-gold via-gold-light to-gold bg-clip-text text-transparent drop-shadow-2xl">
+            <h1 className="text-3xl sm:text-4xl lg:text-6xl font-bold mb-4 sm:mb-6 bg-linear-to-r from-gold via-gold-light to-gold bg-clip-text text-transparent drop-shadow-2xl">
               Let's Talk About Your Next Journey
             </h1>
-            <p className="text-xl text-gray-200 mb-8 max-w-3xl mx-auto bg-black/20 backdrop-blur-sm rounded-2xl px-6 py-4">
+            <p className="text-base sm:text-lg lg:text-xl text-gray-200 mb-6 sm:mb-8 max-w-3xl mx-auto bg-black/20 backdrop-blur-sm rounded-2xl px-4 sm:px-6 py-3 sm:py-4">
               Have questions? Need help with bookings? Our team is ready to assist you 24/7.
             </p>
           </div>
         </div>
       </section>
 
-      {/* Contact Info & Form - Main Background */}
-      <section className="relative px-6 lg:px-16 py-20 overflow-hidden">
+      {/* Contact Info & Form */}
+      <section className="relative px-4 sm:px-6 lg:px-16 py-12 sm:py-16 lg:py-20 overflow-hidden">
         <div 
           className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-8"
           style={{ backgroundImage: "url('/cars/contactCover1.jpg')" }}
         />
-        <div className="relative z-10 max-w-7xl mx-auto bg-linear-to-br from-bg-main/90 via-bg-elevated/90 to-bg-main/90 backdrop-blur-sm rounded-3xl border border-gold/30 p-8 lg:p-12">
-          <div className="grid lg:grid-cols-2 gap-12 items-start">
+        <div className="relative z-10 max-w-7xl mx-auto bg-linear-to-br from-bg-main/90 via-bg-elevated/90 to-bg-main/90 backdrop-blur-sm rounded-3xl border border-gold/30 p-6 sm:p-8 lg:p-12">
+          <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-start">
             {/* Contact Information */}
-            <div className="space-y-8">
-              <h2 className="text-3xl lg:text-4xl font-bold mb-4 text-gold drop-shadow-lg">Contact Information</h2>
-              <p className="text-gray-300 text-lg leading-relaxed bg-black/20 backdrop-blur-sm rounded-xl p-6">
+            <div className="space-y-6 sm:space-y-8">
+              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-4 text-gold drop-shadow-lg">Contact Information</h2>
+              <p className="text-sm sm:text-base lg:text-lg text-gray-300 leading-relaxed bg-black/20 backdrop-blur-sm rounded-xl p-4 sm:p-6">
                 Reach out to us anytime. Whether you need booking assistance, vehicle information, 
                 or have special requirements, our dedicated team is here to help.
               </p>
 
-              <div className="space-y-8 mt-12">
+              <div className="space-y-6 sm:space-y-8 mt-8 sm:mt-12">
                 {contactInfo.map((info, idx) => (
-                  <div key={idx} className="group p-8 bg-bg-main/95 backdrop-blur-sm border border-gold/20 rounded-2xl hover:border-gold/50 hover:shadow-xl hover:shadow-gold/10 transition-all duration-300">
-                    <div className="inline-flex items-center gap-4 mb-6 p-4 bg-gold/10 rounded-xl w-fit">
-                      <div className="size-12 bg-gold/20 rounded-lg flex items-center justify-center">
+                  <div key={idx} className="group p-6 sm:p-8 bg-bg-main/95 backdrop-blur-sm border border-gold/20 rounded-2xl hover:border-gold/50 hover:shadow-xl hover:shadow-gold/10 transition-all duration-300">
+                    <div className="inline-flex items-center gap-3 sm:gap-4 mb-4 sm:mb-6 p-3 sm:p-4 bg-gold/10 rounded-xl w-fit">
+                      <div className="size-10 sm:size-12 bg-gold/20 rounded-lg flex items-center justify-center text-gold">
                         {info.icon}
                       </div>
                       <div>
-                        <h4 className="text-xl font-bold text-white">{info.title}</h4>
+                        <h4 className="text-lg sm:text-xl font-bold text-white">{info.title}</h4>
                       </div>
                     </div>
                     <div className="space-y-2">
                       {info.details.map((detail, dIdx) => (
-                        <p key={dIdx} className="text-gray-300 hover:text-gold transition-all duration-300 group-hover:translate-x-2">
+                        <p key={dIdx} className="text-sm sm:text-base text-gray-300 hover:text-gold transition-all duration-300 group-hover:translate-x-2">
                           {detail}
                         </p>
                       ))}
@@ -132,75 +150,79 @@ export default function ContactPage() {
               </div>
             </div>
 
-            {/* Contact Form - Form Background */}
+            {/* Contact Form */}
             <div className="relative">
               <div 
                 className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-5 -z-10 rounded-2xl"
                 style={{ backgroundImage: "url('/contact-form-bg.jpg')" }}
               />
-              <div className="bg-bg-main/95 backdrop-blur-sm border border-gold/20 rounded-2xl p-8 lg:p-12 hover:border-gold/50 transition-all duration-300 relative z-10">
-                <h3 className="text-2xl font-bold mb-6 text-gold">Send Us a Message</h3>
+              <div className="bg-bg-main/95 backdrop-blur-sm border border-gold/20 rounded-2xl p-6 sm:p-8 lg:p-12 hover:border-gold/50 transition-all duration-300 relative z-10">
+                <h3 className="text-xl sm:text-2xl font-bold mb-6 text-gold">Send Us a Message</h3>
                 
                 {submitStatus === 'success' && (
-                  <div className="mb-6 p-6 bg-green-500/20 border border-green-500/50 rounded-xl text-green-100">
+                  <div className="mb-6 p-4 sm:p-6 bg-green-500/20 border border-green-500/50 rounded-xl text-green-100 animate-in fade-in duration-500">
                     <div className="flex items-center gap-3 mb-2">
-                      <Star className="size-6 shrink-0" />
-                      <h4 className="text-lg font-bold">Thank you for your message!</h4>
+                      <Star className="size-5 sm:size-6 shrink-0" />
+                      <h4 className="text-base sm:text-lg font-bold">Thank you for your message!</h4>
                     </div>
-                    <p>Our team will get back to you within 2 hours. Have a great day!</p>
+                    <p className="text-sm sm:text-base">Our team will get back to you within 2 hours. Have a great day!</p>
                   </div>
                 )}
 
                 {submitStatus === 'error' && (
-                  <div className="mb-6 p-6 bg-red-500/20 border border-red-500/50 rounded-xl text-red-100">
-                    <p>Something went wrong. Please try again or contact us directly.</p>
+                  <div className="mb-6 p-4 sm:p-6 bg-red-500/20 border border-red-500/50 rounded-xl text-red-100">
+                    <p className="text-sm sm:text-base">{errorMessage}</p>
                   </div>
                 )}
 
-                <form onSubmit={handleSubmit} className="space-y-6">
-                  <div className="grid md:grid-cols-2 gap-6">
+                <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
+                  <div className="grid md:grid-cols-2 gap-4 sm:gap-6">
                     <div>
-                      <label className="block text-sm font-semibold text-gray-300 mb-2">Full Name *</label>
+                      <label className="block text-xs sm:text-sm font-semibold text-gray-300 mb-2">Full Name *</label>
                       <input
                         type="text"
                         required
                         value={formData.name}
                         onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                        className="w-full px-4 py-3 bg-bg-main/80 backdrop-blur-sm border border-gold/30 rounded-xl focus:outline-none focus:border-gold focus:ring-2 focus:ring-gold/20 text-white placeholder-gray-500 transition-all duration-300"
+                        className="w-full px-3 sm:px-4 py-2 sm:py-3 bg-bg-main/80 backdrop-blur-sm border border-gold/30 rounded-xl focus:outline-none focus:border-gold focus:ring-2 focus:ring-gold/20 text-white placeholder-gray-500 transition-all duration-300 text-sm sm:text-base"
                         placeholder="Enter your name"
+                        disabled={isSubmitting}
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-semibold text-gray-300 mb-2">Email Address *</label>
+                      <label className="block text-xs sm:text-sm font-semibold text-gray-300 mb-2">Email Address *</label>
                       <input
                         type="email"
                         required
                         value={formData.email}
                         onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                        className="w-full px-4 py-3 bg-bg-main/80 backdrop-blur-sm border border-gold/30 rounded-xl focus:outline-none focus:border-gold focus:ring-2 focus:ring-gold/20 text-white placeholder-gray-500 transition-all duration-300"
+                        className="w-full px-3 sm:px-4 py-2 sm:py-3 bg-bg-main/80 backdrop-blur-sm border border-gold/30 rounded-xl focus:outline-none focus:border-gold focus:ring-2 focus:ring-gold/20 text-white placeholder-gray-500 transition-all duration-300 text-sm sm:text-base"
                         placeholder="your@email.com"
+                        disabled={isSubmitting}
                       />
                     </div>
                   </div>
 
                   <div>
-                    <label className="block text-sm font-semibold text-gray-300 mb-2">Phone Number</label>
+                    <label className="block text-xs sm:text-sm font-semibold text-gray-300 mb-2">Phone Number</label>
                     <input
                       type="tel"
                       value={formData.phone}
                       onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                      className="w-full px-4 py-3 bg-bg-main/80 backdrop-blur-sm border border-gold/30 rounded-xl focus:outline-none focus:border-gold focus:ring-2 focus:ring-gold/20 text-white placeholder-gray-500 transition-all duration-300"
+                      className="w-full px-3 sm:px-4 py-2 sm:py-3 bg-bg-main/80 backdrop-blur-sm border border-gold/30 rounded-xl focus:outline-none focus:border-gold focus:ring-2 focus:ring-gold/20 text-white placeholder-gray-500 transition-all duration-300 text-sm sm:text-base"
                       placeholder="+91 98765 43210"
+                      disabled={isSubmitting}
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-semibold text-gray-300 mb-2">Service Interested In *</label>
+                    <label className="block text-xs sm:text-sm font-semibold text-gray-300 mb-2">Service Interested In *</label>
                     <select
                       required
                       value={formData.service}
                       onChange={(e) => setFormData({ ...formData, service: e.target.value })}
-                      className="w-full px-4 py-3 bg-bg-main/80 backdrop-blur-sm border border-gold/30 rounded-xl focus:outline-none focus:border-gold focus:ring-2 focus:ring-gold/20 text-white"
+                      className="w-full px-3 sm:px-4 py-2 sm:py-3 bg-bg-main/80 backdrop-blur-sm border border-gold/30 rounded-xl focus:outline-none focus:border-gold focus:ring-2 focus:ring-gold/20 text-white text-sm sm:text-base"
+                      disabled={isSubmitting}
                     >
                       <option value="">Select a service</option>
                       <option value="self-drive">Self-Drive Rental</option>
@@ -212,30 +234,31 @@ export default function ContactPage() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-semibold text-gray-300 mb-2">Message *</label>
+                    <label className="block text-xs sm:text-sm font-semibold text-gray-300 mb-2">Message *</label>
                     <textarea
                       required
                       rows={5}
                       value={formData.message}
                       onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                      className="w-full px-4 py-3 bg-bg-main/80 backdrop-blur-sm border border-gold/30 rounded-xl focus:outline-none focus:border-gold focus:ring-2 focus:ring-gold/20 text-white placeholder-gray-500 resize-vertical transition-all duration-300"
+                      className="w-full px-3 sm:px-4 py-2 sm:py-3 bg-bg-main/80 backdrop-blur-sm border border-gold/30 rounded-xl focus:outline-none focus:border-gold focus:ring-2 focus:ring-gold/20 text-white placeholder-gray-500 resize-vertical transition-all duration-300 text-sm sm:text-base"
                       placeholder="Tell us about your requirements..."
+                      disabled={isSubmitting}
                     />
                   </div>
 
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="w-full bg-gold hover:bg-gold-light text-black px-8 py-4 rounded-xl font-bold text-lg transition-all duration-300 shadow-lg shadow-gold/30 hover:scale-105 hover:shadow-gold/40 disabled:opacity-50 disabled:cursor-not-allowed disabled:scale-100 flex items-center justify-center gap-3"
+                    className="w-full bg-gold hover:bg-gold-light text-black px-6 sm:px-8 py-3 sm:py-4 rounded-xl font-bold text-base sm:text-lg transition-all duration-300 shadow-lg shadow-gold/30 hover:scale-105 hover:shadow-gold/40 disabled:opacity-50 disabled:cursor-not-allowed disabled:scale-100 flex items-center justify-center gap-3"
                   >
                     {isSubmitting ? (
                       <>
-                        <div className="size-5 border-2 border-black/20 border-t-black rounded-full animate-spin" />
+                        <div className="size-4 sm:size-5 border-2 border-black/20 border-t-black rounded-full animate-spin" />
                         Sending...
                       </>
                     ) : (
                       <>
-                        <Send className="size-5" />
+                        <Send className="size-4 sm:size-5" />
                         Send Message
                       </>
                     )}
@@ -248,13 +271,13 @@ export default function ContactPage() {
       </section>
 
       {/* Quick Links */}
-      <section className="px-6 lg:px-16 py-20 bg-linear-to-br from-bg-elevated to-bg-main border-t border-gold/20">
+      <section className="px-4 sm:px-6 lg:px-16 py-12 sm:py-16 lg:py-20 bg-linear-to-br from-bg-elevated to-bg-main border-t border-gold/20">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl lg:text-4xl font-bold mb-4 text-gold">Need Help Immediately?</h2>
-            <p className="text-gray-300 text-lg">Connect with us through these popular channels</p>
+          <div className="text-center mb-12 sm:mb-16">
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-3 sm:mb-4 text-gold">Need Help Immediately?</h2>
+            <p className="text-sm sm:text-base lg:text-lg text-gray-300">Connect with us through these popular channels</p>
           </div>
-          <div className="grid md:grid-cols-3 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
             {[
               { icon: <Car />, label: 'Book a Car', href: '/login' },
               { icon: <Users />, label: 'Corporate', href: '/services' },
@@ -264,12 +287,12 @@ export default function ContactPage() {
               <Link
                 key={idx}
                 href={item.href}
-                className="group flex flex-col items-center p-6 bg-bg-main border border-gold/20 rounded-xl hover:border-gold/50 hover:shadow-lg hover:shadow-gold/10 transition-all duration-300 text-center"
+                className="group flex flex-col items-center p-4 sm:p-6 bg-bg-main border border-gold/20 rounded-xl hover:border-gold/50 hover:shadow-lg hover:shadow-gold/10 transition-all duration-300 text-center"
               >
-                <div className="size-16 bg-gold/10 rounded-2xl flex items-center justify-center mb-4 group-hover:bg-gold/20 transition-colors">
+                <div className="size-12 sm:size-16 bg-gold/10 rounded-2xl flex items-center justify-center mb-3 sm:mb-4 group-hover:bg-gold/20 transition-colors text-gold">
                   {item.icon}
                 </div>
-                <span className="font-semibold text-white group-hover:text-gold transition-colors">{item.label}</span>
+                <span className="text-sm sm:text-base font-semibold text-white group-hover:text-gold transition-colors">{item.label}</span>
               </Link>
             ))}
           </div>
@@ -277,25 +300,25 @@ export default function ContactPage() {
       </section>
 
       {/* Trust Indicators */}
-      <section className="px-6 lg:px-16 py-16 border-t border-gold/20">
+      <section className="px-4 sm:px-6 lg:px-16 py-12 sm:py-16 border-t border-gold/20">
         <div className="max-w-7xl mx-auto text-center">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-8">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-8 mb-6 sm:mb-8">
             {[
               '10,000+ Happy Customers',
               '500+ Vehicles',
               '50+ Cities',
               '24/7 Support'
             ].map((stat, idx) => (
-              <div key={idx} className="p-4">
-                <p className="text-lg font-bold text-gold">{stat}</p>
+              <div key={idx} className="p-3 sm:p-4">
+                <p className="text-sm sm:text-base lg:text-lg font-bold text-gold">{stat}</p>
               </div>
             ))}
           </div>
-          <div className="flex flex-wrap justify-center items-center gap-6 text-sm text-gray-400">
+          <div className="flex flex-wrap justify-center items-center gap-3 sm:gap-6 text-xs sm:text-sm text-gray-400">
             <span>© 2026 Rental Drive. All rights reserved.</span>
-            <span>•</span>
+            <span className="hidden sm:inline">•</span>
             <span>Secure Payments</span>
-            <span>•</span>
+            <span className="hidden sm:inline">•</span>
             <span>COVID Safe</span>
           </div>
         </div>

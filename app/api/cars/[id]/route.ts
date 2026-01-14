@@ -14,7 +14,7 @@ export async function GET(
         id,
         name,
         type,
-        image_url,
+        image_urls,
         fuel_capacity,
         transmission,
         capacity,

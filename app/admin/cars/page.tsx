@@ -13,7 +13,8 @@ import {
   Eye,
   ToggleLeft,
   ToggleRight,
-  Package
+  Package,
+  Images // Added for multi-image indicator
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
@@ -21,12 +22,12 @@ interface Car {
   id: number;
   name: string;
   type: string;
-  image_url: string;
+  image_urls: string[]; // Changed from image_url to image_urls array
   fuel_capacity: string;
   transmission: string;
   capacity: number;
-  price: number;
-  original_price?: number;
+  price: string; // Changed to string to match API response
+  original_price?: string | null; // Changed to string to match API response
   license_plate: string;
   description?: string;
   is_available: boolean;
@@ -90,7 +91,7 @@ export default function CarsListPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           ...car,
-          imageUrl: car.image_url,
+          imageUrls: car.image_urls, // Changed to match new structure
           fuelCapacity: car.fuel_capacity,
           originalPrice: car.original_price,
           licensePlate: car.license_plate,
@@ -118,6 +119,13 @@ export default function CarsListPage() {
   });
 
   const carTypes = ['all', ...new Set(cars.map(car => car.type))];
+
+  // Helper function to get primary image
+  const getPrimaryImage = (imageUrls: string[]) => {
+    return imageUrls && imageUrls.length > 0 
+      ? imageUrls[0] 
+      : '/placeholder-car.png'; // Fallback image
+  };
 
   if (loading) {
     return (
@@ -211,12 +219,27 @@ export default function CarsListPage() {
             >
               {/* Car Image */}
               <div className="relative h-40 sm:h-48 bg-linear-to-br from-bg-elevated to-bg-secondary">
-                <Image
-                  src={car.image_url}
-                  alt={car.name}
-                  fill
-                  className="object-contain p-4"
-                />
+                {car.image_urls && car.image_urls.length > 0 ? (
+                  <Image
+                    src={getPrimaryImage(car.image_urls)}
+                    alt={car.name}
+                    fill
+                    className="object-contain p-4"
+                  />
+                ) : (
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <Package className="size-16 text-gray-600" />
+                  </div>
+                )}
+                
+                {/* Multiple Images Indicator */}
+                {car.image_urls && car.image_urls.length > 1 && (
+                  <div className="absolute top-2 left-2 bg-gold/90 text-black px-2 py-1 rounded-md text-xs font-semibold flex items-center gap-1 shadow-md">
+                    <Images className="size-3" />
+                    {car.image_urls.length}
+                  </div>
+                )}
+
                 {!car.is_available && (
                   <div className="absolute inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center">
                     <span className="bg-red-500 text-white px-3 py-1 rounded-full text-xs sm:text-sm font-semibold">

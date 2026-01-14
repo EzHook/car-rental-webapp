@@ -8,8 +8,8 @@ export default function AddCarPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
-  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imagePreviews, setImagePreviews] = useState<string[]>([]);
+  const [imageFiles, setImageFiles] = useState<File[]>([]);
   const [formData, setFormData] = useState({
     name: '',
     type: 'Sport',
@@ -23,54 +23,97 @@ export default function AddCarPage() {
   });
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
+    const files = Array.from(e.target.files || []);
+    
+    if (files.length === 0) return;
+
+    // Validate total number of images (max 5)
+    if (imageFiles.length + files.length > 5) {
+      alert('You can upload a maximum of 5 images');
+      return;
+    }
+
+    // Validate and process each file
+    const validFiles: File[] = [];
+    let validationErrors: string[] = [];
+
+    files.forEach(file => {
       // Validate file type
       if (!file.type.startsWith('image/')) {
-        alert('Please select an image file');
+        validationErrors.push(`${file.name} is not an image file`);
         return;
       }
 
       // Validate file size (max 5MB)
       if (file.size > 5 * 1024 * 1024) {
-        alert('Image size should be less than 5MB');
+        validationErrors.push(`${file.name} exceeds 5MB`);
         return;
       }
 
-      setImageFile(file);
-      
-      // Show preview
+      validFiles.push(file);
+    });
+
+    if (validationErrors.length > 0) {
+      alert(validationErrors.join('\n'));
+    }
+
+    if (validFiles.length === 0) return;
+
+    // Create previews for valid files
+    const newPreviews: string[] = [];
+    let loadedCount = 0;
+
+    validFiles.forEach((file, index) => {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setImagePreview(reader.result as string);
+        newPreviews[index] = reader.result as string;
+        loadedCount++;
+        
+        // Update state only after all files are loaded
+        if (loadedCount === validFiles.length) {
+          setImageFiles(prev => [...prev, ...validFiles]);
+          setImagePreviews(prev => [...prev, ...newPreviews]);
+        }
       };
       reader.readAsDataURL(file);
-    }
+    });
   };
 
-  const uploadImageToCloudinary = async (): Promise<string | null> => {
-    if (!imageFile) return null;
+  const removeImage = (index: number) => {
+    setImageFiles(prev => prev.filter((_, i) => i !== index));
+    setImagePreviews(prev => prev.filter((_, i) => i !== index));
+  };
+
+  const uploadImagesToCloudinary = async (): Promise<string[]> => {
+    if (imageFiles.length === 0) return [];
 
     setUploading(true);
-    try {
-      const formData = new FormData();
-      formData.append('file', imageFile);
 
-      const response = await fetch('/api/upload', {
-        method: 'POST',
-        body: formData,
+    try {
+      // Upload all images in parallel for better performance
+      const uploadPromises = imageFiles.map(async (file) => {
+        const formDataUpload = new FormData();
+        formDataUpload.append('file', file);
+
+        const response = await fetch('/api/upload', {
+          method: 'POST',
+          body: formDataUpload,
+        });
+
+        if (!response.ok) {
+          throw new Error(`Failed to upload ${file.name}`);
+        }
+
+        const data = await response.json();
+        return data.url;
       });
 
-      if (!response.ok) {
-        throw new Error('Failed to upload image');
-      }
-
-      const data = await response.json();
-      return data.url;
+      const uploadedUrls = await Promise.all(uploadPromises);
+      return uploadedUrls;
     } catch (error) {
       console.error('Upload error:', error);
-      alert('Failed to upload image. Please try again.');
-      return null;
+      alert('Failed to upload one or more images. Please try again.');
+      return [];
     } finally {
       setUploading(false);
     }
@@ -79,29 +122,29 @@ export default function AddCarPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!imageFile) {
-      alert('Please select a car image');
+    if (imageFiles.length === 0) {
+      alert('Please select at least one car image');
       return;
     }
 
     setLoading(true);
 
     try {
-      // Upload image first
-      const imageUrl = await uploadImageToCloudinary();
+      // Upload all images first
+      const imageUrls = await uploadImagesToCloudinary();
       
-      if (!imageUrl) {
+      if (imageUrls.length === 0) {
         setLoading(false);
         return;
       }
 
-      // Add car to database
+      // Add car to database with array of image URLs
       const response = await fetch('/api/admin/cars', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           ...formData,
-          imageUrl,
+          imageUrls, // Array of URLs instead of single imageUrl
           capacity: parseInt(formData.capacity),
           price: parseFloat(formData.price),
           originalPrice: formData.originalPrice ? parseFloat(formData.originalPrice) : null,
@@ -124,11 +167,6 @@ export default function AddCarPage() {
     }
   };
 
-  const removeImage = () => {
-    setImagePreview(null);
-    setImageFile(null);
-  };
-
   return (
     <div className="p-4 sm:p-6 lg:p-8 min-h-screen">
       <div className="max-w-4xl mx-auto">
@@ -147,45 +185,62 @@ export default function AddCarPage() {
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="bg-bg-card border border-bg-elevated rounded-xl shadow-lg p-5 sm:p-6 lg:p-8">
-          {/* Image Upload */}
+          {/* Multiple Images Upload */}
           <div className="mb-6">
             <label className="block text-sm font-semibold text-white mb-3">
-              Car Image <span className="text-red-400">*</span>
+              Car Images (Max 5) <span className="text-red-400">*</span>
             </label>
             
-            {imagePreview ? (
-              <div className="relative border-2 border-bg-elevated rounded-lg p-4 bg-bg-elevated">
-                <img 
-                  src={imagePreview} 
-                  alt="Preview" 
-                  className="max-h-64 mx-auto rounded-lg object-contain" 
-                />
-                <button
-                  type="button"
-                  onClick={removeImage}
-                  className="absolute top-6 right-6 bg-red-500 text-white p-2 rounded-full hover:bg-red-600 transition-colors shadow-lg"
-                >
-                  <X className="size-5" />
-                </button>
-                <div className="mt-3 text-center text-sm text-gray-400">
-                  {imageFile?.name}
-                </div>
+            {/* Image Previews Grid */}
+            {imagePreviews.length > 0 && (
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-4">
+                {imagePreviews.map((preview, index) => (
+                  <div key={index} className="relative border-2 border-bg-elevated rounded-lg p-2 bg-bg-elevated group">
+                    <img 
+                      src={preview} 
+                      alt={`Preview ${index + 1}`} 
+                      className="w-full h-32 object-cover rounded transition-opacity group-hover:opacity-75" 
+                    />
+                    <button
+                      type="button"
+                      onClick={() => removeImage(index)}
+                      className="absolute -top-2 -right-2 bg-red-500 text-white p-1.5 rounded-full hover:bg-red-600 transition-colors shadow-lg z-10"
+                    >
+                      <X className="size-4" />
+                    </button>
+                    {index === 0 && (
+                      <div className="absolute top-2 left-2 bg-gold text-black text-xs px-2 py-1 rounded font-semibold shadow-md">
+                        Primary
+                      </div>
+                    )}
+                    <div className="absolute bottom-2 left-2 bg-black/70 text-white text-xs px-2 py-1 rounded">
+                      {imageFiles[index]?.name.length > 15 
+                        ? imageFiles[index]?.name.substring(0, 15) + '...'
+                        : imageFiles[index]?.name}
+                    </div>
+                  </div>
+                ))}
               </div>
-            ) : (
+            )}
+
+            {/* Upload Area */}
+            {imagePreviews.length < 5 && (
               <div className="border-2 border-dashed border-bg-elevated rounded-lg p-8 sm:p-12 text-center hover:border-gold transition-colors cursor-pointer relative bg-bg-elevated/50">
                 <input
                   type="file"
                   accept="image/*"
+                  multiple
                   onChange={handleImageChange}
                   className="absolute inset-0 opacity-0 cursor-pointer"
-                  required
                 />
                 <ImageIcon className="size-12 sm:size-16 text-gold mx-auto mb-4" />
                 <p className="text-sm sm:text-base text-white mb-2 font-semibold">
-                  Click to upload or drag and drop
+                  {imagePreviews.length === 0 
+                    ? 'Click to upload or drag and drop' 
+                    : `Add more images (${5 - imagePreviews.length} remaining)`}
                 </p>
                 <p className="text-xs sm:text-sm text-gray-400">
-                  PNG, JPG, WEBP up to 5MB
+                  PNG, JPG, WEBP up to 5MB each • First image will be primary
                 </p>
               </div>
             )}
@@ -339,7 +394,7 @@ export default function AddCarPage() {
               {loading ? (
                 <>
                   <Loader2 className="size-5 animate-spin" />
-                  {uploading ? 'Uploading Image...' : 'Adding Car...'}
+                  {uploading ? `Uploading ${imageFiles.length} image${imageFiles.length > 1 ? 's' : ''}...` : 'Adding Car...'}
                 </>
               ) : (
                 <>

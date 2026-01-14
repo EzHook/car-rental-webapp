@@ -10,7 +10,7 @@ interface Car {
   id: number;
   name: string;
   type: string;
-  image_url: string;
+  image_urls: string[]; // Changed from image_url to image_urls array
   fuel_capacity: string;
   transmission: string;
   capacity: number;
@@ -194,7 +194,13 @@ export default function CarDetailsPage() {
     );
   }
 
-  const carImages = [car.image_url, car.image_url, car.image_url];
+  // Get car images - use actual images from array or fallback to first image
+  const carImages = car.image_urls && car.image_urls.length > 0 
+    ? car.image_urls 
+    : ['/placeholder-car.png'];
+
+  // Get primary image for display
+  const primaryImage = carImages[selectedImageIndex] || carImages[0];
 
   return (
     <div className="min-h-screen bg-bg-main px-6 lg:px-16 py-8">
@@ -218,13 +224,10 @@ export default function CarDetailsPage() {
                 <h3 className="text-white text-2xl lg:text-3xl font-semibold mb-2">
                   {car.name}
                 </h3>
-                {/* <p className="text-gray-300 text-sm">
-                  {car.description || 'Comfort and luxury combined in one vehicle'}
-                </p> */}
               </div>
               <div className="relative h-64 lg:h-80">
                 <Image
-                  src={carImages[selectedImageIndex]}
+                  src={primaryImage}
                   alt={car.name}
                   fill
                   className="object-contain"
@@ -234,27 +237,29 @@ export default function CarDetailsPage() {
             </div>
           </div>
 
-          {/* Thumbnail Images */}
-          <div className="grid grid-cols-3 gap-4">
-            {carImages.map((image, index) => (
-              <button
-                key={index}
-                onClick={() => setSelectedImageIndex(index)}
-                className={`relative aspect-video bg-bg-card rounded-lg overflow-hidden border-2 transition-all ${
-                  selectedImageIndex === index
-                    ? 'border-gold ring-2 ring-gold/20'
-                    : 'border-bg-elevated hover:border-gold/50'
-                }`}
-              >
-                <Image
-                  src={image}
-                  alt={`${car.name} view ${index + 1}`}
-                  fill
-                  className="object-contain p-2"
-                />
-              </button>
-            ))}
-          </div>
+          {/* Thumbnail Images - only show if there are multiple images */}
+          {carImages.length > 1 && (
+            <div className="grid grid-cols-3 gap-4">
+              {carImages.slice(0, 3).map((image, index) => (
+                <button
+                  key={index}
+                  onClick={() => setSelectedImageIndex(index)}
+                  className={`relative aspect-video bg-bg-card rounded-lg overflow-hidden border-2 transition-all ${
+                    selectedImageIndex === index
+                      ? 'border-gold ring-2 ring-gold/20'
+                      : 'border-bg-elevated hover:border-gold/50'
+                  }`}
+                >
+                  <Image
+                    src={image}
+                    alt={`${car.name} view ${index + 1}`}
+                    fill
+                    className="object-contain p-2"
+                  />
+                </button>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Right Side - Car Details */}
@@ -514,7 +519,7 @@ export default function CarDetailsPage() {
                 id={recommendedCar.id.toString()}
                 name={recommendedCar.name}
                 type={recommendedCar.type}
-                image={recommendedCar.image_url}
+                image={recommendedCar.image_urls?.[0] || '/placeholder-car.png'}
                 fuelCapacity={recommendedCar.fuel_capacity}
                 transmission={recommendedCar.transmission as 'Manual' | 'Automatic'}
                 capacity={recommendedCar.capacity}

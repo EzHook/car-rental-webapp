@@ -66,7 +66,7 @@ export default function Footer() {
           </div>
 
           {/* Socials Section */}
-          <div className="lg:col-span-3">
+          {/* <div className="lg:col-span-3">
             <h3 className="text-white font-semibold text-lg mb-6">Follow Us</h3>
             <ul className="space-y-4">
               <li>
@@ -100,7 +100,7 @@ export default function Footer() {
                 </a>
               </li>
             </ul>
-          </div>
+          </div> */}
         </div>
       </div>
 
@@ -111,7 +111,7 @@ export default function Footer() {
             <p className="text-white font-semibold text-sm">
               ©2026 RENTAL DRIVE. All rights reserved
             </p>
-            <div className="flex items-center gap-8">
+            {/* <div className="flex items-center gap-8">
               <Link 
                 href="/privacy-policy" 
                 className="text-gray-400 font-semibold hover:text-gold transition-colors text-sm"
@@ -124,7 +124,7 @@ export default function Footer() {
               >
                 Terms & Condition
               </Link>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>

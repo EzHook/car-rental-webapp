@@ -9,7 +9,7 @@ export async function GET(request: NextRequest) {
         id,
         name,
         type,
-        image_url,
+        image_urls,
         fuel_capacity,
         transmission,
         capacity,

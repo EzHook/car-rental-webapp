@@ -13,7 +13,7 @@ export async function POST(request: NextRequest) {
     const {
       name,
       type,
-      imageUrl,
+      imageUrls, // Changed from imageUrl to imageUrls (array)
       fuelCapacity,
       transmission,
       capacity,
@@ -24,9 +24,18 @@ export async function POST(request: NextRequest) {
     } = body;
 
     // Validate required fields
-    if (!name || !type || !imageUrl || !fuelCapacity || !transmission || !capacity || !price || !licensePlate) {
+    if (!name || !type || !imageUrls || !Array.isArray(imageUrls) || imageUrls.length === 0 || 
+        !fuelCapacity || !transmission || !capacity || !price || !licensePlate) {
       return NextResponse.json(
-        { error: 'Missing required fields' },
+        { error: 'Missing required fields or invalid image data' },
+        { status: 400 }
+      );
+    }
+
+    // Validate image URLs array
+    if (imageUrls.length > 5) {
+      return NextResponse.json(
+        { error: 'Maximum 5 images allowed' },
         { status: 400 }
       );
     }
@@ -43,12 +52,12 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Insert car into database
+    // Insert car into database with array of image URLs
     const result = await sql`
       INSERT INTO cars (
         name,
         type,
-        image_url,
+        image_urls,
         fuel_capacity,
         transmission,
         capacity,
@@ -59,7 +68,7 @@ export async function POST(request: NextRequest) {
       ) VALUES (
         ${name},
         ${type},
-        ${imageUrl},
+        ${imageUrls}, -- PostgreSQL will automatically handle the array
         ${fuelCapacity},
         ${transmission},
         ${capacity},

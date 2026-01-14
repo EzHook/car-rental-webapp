@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Upload, X, Loader2, Image as ImageIcon, ArrowLeft, Save } from 'lucide-react';
+import { Upload, X, Loader2, Image as ImageIcon, ArrowLeft, Save, Images } from 'lucide-react';
 import { useRouter, useParams } from 'next/navigation';
 
 export default function EditCarPage() {
@@ -12,8 +12,9 @@ export default function EditCarPage() {
   const [loading, setLoading] = useState(false);
   const [fetching, setFetching] = useState(true);
   const [uploading, setUploading] = useState(false);
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
-  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imagePreviews, setImagePreviews] = useState<string[]>([]);
+  const [imageFiles, setImageFiles] = useState<File[]>([]);
+  const [existingImageUrls, setExistingImageUrls] = useState<string[]>([]);
   const [formData, setFormData] = useState({
     name: '',
     type: 'Sport',
@@ -24,7 +25,6 @@ export default function EditCarPage() {
     originalPrice: '',
     licensePlate: '',
     description: '',
-    imageUrl: '',
     isAvailable: true,
   });
 
@@ -49,11 +49,13 @@ export default function EditCarPage() {
           originalPrice: car.original_price?.toString() || '',
           licensePlate: car.license_plate,
           description: car.description || '',
-          imageUrl: car.image_url,
           isAvailable: car.is_available,
         });
         
-        setImagePreview(car.image_url);
+        // Handle existing images
+        const existingImages = car.image_urls || [];
+        setExistingImageUrls(existingImages);
+        setImagePreviews(existingImages);
       } else {
         alert('Car not found');
         router.push('/admin/cars');
@@ -67,51 +69,102 @@ export default function EditCarPage() {
   };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
+    const files = Array.from(e.target.files || []);
+    
+    if (files.length === 0) return;
+
+    // Check total images (existing + new)
+    const totalImages = imagePreviews.length + files.length;
+    if (totalImages > 5) {
+      alert(`You can only have a maximum of 5 images. You currently have ${imagePreviews.length} images.`);
+      return;
+    }
+
+    // Validate each file
+    const validFiles: File[] = [];
+    let validationErrors: string[] = [];
+
+    files.forEach(file => {
       if (!file.type.startsWith('image/')) {
-        alert('Please select an image file');
+        validationErrors.push(`${file.name} is not an image file`);
         return;
       }
 
       if (file.size > 5 * 1024 * 1024) {
-        alert('Image size should be less than 5MB');
+        validationErrors.push(`${file.name} exceeds 5MB`);
         return;
       }
 
-      setImageFile(file);
-      
+      validFiles.push(file);
+    });
+
+    if (validationErrors.length > 0) {
+      alert(validationErrors.join('\n'));
+    }
+
+    if (validFiles.length === 0) return;
+
+    // Create previews for new files
+    const newPreviews: string[] = [];
+    let loadedCount = 0;
+
+    validFiles.forEach((file, index) => {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setImagePreview(reader.result as string);
+        newPreviews[index] = reader.result as string;
+        loadedCount++;
+        
+        if (loadedCount === validFiles.length) {
+          setImageFiles(prev => [...prev, ...validFiles]);
+          setImagePreviews(prev => [...prev, ...newPreviews]);
+        }
       };
       reader.readAsDataURL(file);
-    }
+    });
   };
 
-  const uploadImageToCloudinary = async (): Promise<string | null> => {
-    if (!imageFile) return formData.imageUrl;
+  const removeImage = (index: number) => {
+    // Check if it's an existing image or new upload
+    if (index < existingImageUrls.length) {
+      // Remove from existing images
+      setExistingImageUrls(prev => prev.filter((_, i) => i !== index));
+    } else {
+      // Remove from new uploads
+      const newFileIndex = index - existingImageUrls.length;
+      setImageFiles(prev => prev.filter((_, i) => i !== newFileIndex));
+    }
+    setImagePreviews(prev => prev.filter((_, i) => i !== index));
+  };
+
+  const uploadNewImagesToCloudinary = async (): Promise<string[]> => {
+    if (imageFiles.length === 0) return [];
 
     setUploading(true);
-    try {
-      const formDataUpload = new FormData();
-      formDataUpload.append('file', imageFile);
 
-      const response = await fetch('/api/upload', {
-        method: 'POST',
-        body: formDataUpload,
+    try {
+      const uploadPromises = imageFiles.map(async (file) => {
+        const formDataUpload = new FormData();
+        formDataUpload.append('file', file);
+
+        const response = await fetch('/api/upload', {
+          method: 'POST',
+          body: formDataUpload,
+        });
+
+        if (!response.ok) {
+          throw new Error(`Failed to upload ${file.name}`);
+        }
+
+        const data = await response.json();
+        return data.url;
       });
 
-      if (!response.ok) {
-        throw new Error('Failed to upload image');
-      }
-
-      const data = await response.json();
-      return data.url;
+      const uploadedUrls = await Promise.all(uploadPromises);
+      return uploadedUrls;
     } catch (error) {
       console.error('Upload error:', error);
-      alert('Failed to upload image. Please try again.');
-      return null;
+      alert('Failed to upload one or more images. Please try again.');
+      return [];
     } finally {
       setUploading(false);
     }
@@ -119,26 +172,32 @@ export default function EditCarPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (imagePreviews.length === 0) {
+      alert('Please select at least one car image');
+      return;
+    }
+
     setLoading(true);
 
     try {
-      let imageUrl = formData.imageUrl;
+      // Upload new images
+      const newUploadedUrls = await uploadNewImagesToCloudinary();
       
-      if (imageFile) {
-        const uploadedUrl = await uploadImageToCloudinary();
-        if (!uploadedUrl) {
-          setLoading(false);
-          return;
-        }
-        imageUrl = uploadedUrl;
+      if (imageFiles.length > 0 && newUploadedUrls.length === 0) {
+        setLoading(false);
+        return;
       }
+
+      // Combine existing and newly uploaded URLs
+      const allImageUrls = [...existingImageUrls, ...newUploadedUrls];
 
       const response = await fetch(`/api/admin/cars/${carId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           ...formData,
-          imageUrl,
+          imageUrls: allImageUrls,
           capacity: parseInt(formData.capacity),
           price: parseFloat(formData.price),
           originalPrice: formData.originalPrice ? parseFloat(formData.originalPrice) : null,
@@ -186,46 +245,65 @@ export default function EditCarPage() {
         </div>
 
         <form onSubmit={handleSubmit} className="bg-bg-card border border-bg-elevated rounded-xl shadow-lg p-5 sm:p-6 lg:p-8">
-          {/* Image Upload */}
+          {/* Multiple Images Upload */}
           <div className="mb-6">
             <label className="block text-sm font-semibold text-white mb-3">
-              Car Image <span className="text-red-400">*</span>
+              Car Images (Max 5) <span className="text-red-400">*</span>
             </label>
             
-            {imagePreview ? (
-              <div className="relative border-2 border-bg-elevated rounded-lg p-4 bg-bg-elevated">
-                <img 
-                  src={imagePreview} 
-                  alt="Preview" 
-                  className="max-h-64 mx-auto rounded-lg object-contain" 
-                />
-                <button
-                  type="button"
-                  onClick={() => {
-                    setImagePreview(null);
-                    setImageFile(null);
-                  }}
-                  className="absolute top-6 right-6 bg-red-500 text-white p-2 rounded-full hover:bg-red-600 transition-colors shadow-lg"
-                >
-                  <X className="size-5" />
-                </button>
-                <div className="mt-3 text-center">
-                  <p className="text-xs text-gray-400">Click the X to change image</p>
-                </div>
+            {/* Image Previews Grid */}
+            {imagePreviews.length > 0 && (
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-4">
+                {imagePreviews.map((preview, index) => (
+                  <div key={index} className="relative border-2 border-bg-elevated rounded-lg p-2 bg-bg-elevated group">
+                    <img 
+                      src={preview} 
+                      alt={`Preview ${index + 1}`} 
+                      className="w-full h-32 object-cover rounded transition-opacity group-hover:opacity-75" 
+                    />
+                    <button
+                      type="button"
+                      onClick={() => removeImage(index)}
+                      className="absolute -top-2 -right-2 bg-red-500 text-white p-1.5 rounded-full hover:bg-red-600 transition-colors shadow-lg z-10"
+                    >
+                      <X className="size-4" />
+                    </button>
+                    {index === 0 && (
+                      <div className="absolute top-2 left-2 bg-gold text-black text-xs px-2 py-1 rounded font-semibold shadow-md">
+                        Primary
+                      </div>
+                    )}
+                    {index < existingImageUrls.length ? (
+                      <div className="absolute bottom-2 right-2 bg-blue-500/90 text-white text-xs px-2 py-1 rounded">
+                        Existing
+                      </div>
+                    ) : (
+                      <div className="absolute bottom-2 right-2 bg-green-500/90 text-white text-xs px-2 py-1 rounded">
+                        New
+                      </div>
+                    )}
+                  </div>
+                ))}
               </div>
-            ) : (
+            )}
+
+            {/* Upload Area */}
+            {imagePreviews.length < 5 && (
               <div className="border-2 border-dashed border-bg-elevated rounded-lg p-8 sm:p-12 text-center hover:border-gold transition-colors cursor-pointer relative bg-bg-elevated/50">
                 <input
                   type="file"
                   accept="image/*"
+                  multiple
                   onChange={handleImageChange}
                   className="absolute inset-0 opacity-0 cursor-pointer"
                 />
                 <ImageIcon className="size-12 sm:size-16 text-gold mx-auto mb-4" />
                 <p className="text-sm sm:text-base text-white mb-2 font-semibold">
-                  Click to upload new image
+                  {imagePreviews.length === 0 
+                    ? 'Click to upload or drag and drop' 
+                    : `Add more images (${5 - imagePreviews.length} remaining)`}
                 </p>
-                <p className="text-xs sm:text-sm text-gray-400">PNG, JPG up to 5MB</p>
+                <p className="text-xs sm:text-sm text-gray-400">PNG, JPG up to 5MB each</p>
               </div>
             )}
           </div>
@@ -408,7 +486,7 @@ export default function EditCarPage() {
               {loading ? (
                 <>
                   <Loader2 className="size-5 animate-spin" />
-                  {uploading ? 'Uploading Image...' : 'Updating Car...'}
+                  {uploading ? `Uploading ${imageFiles.length} image${imageFiles.length > 1 ? 's' : ''}...` : 'Updating Car...'}
                 </>
               ) : (
                 <>
