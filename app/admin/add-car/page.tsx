@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Upload, X, Loader2, Image as ImageIcon, ArrowLeft } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
@@ -21,6 +21,49 @@ export default function AddCarPage() {
     licensePlate: '',
     description: '',
   });
+
+  const [existingCars, setExistingCars] = useState<any[]>([]);
+  const [fetchingCars, setFetchingCars] = useState(true);
+
+  // Fetch existing cars for auto-fill functionality
+  useEffect(() => {
+    const fetchExistingCars = async () => {
+      try {
+        const response = await fetch('/api/admin/cars');
+        if (response.ok) {
+          const data = await response.json();
+          setExistingCars(data.cars);
+        }
+      } catch (error) {
+        console.error('Failed to fetch existing cars:', error);
+      } finally {
+        setFetchingCars(false);
+      }
+    };
+    fetchExistingCars();
+  }, []);
+
+  const handleAutoFill = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const carId = e.target.value;
+    if (!carId) return;
+
+    const selectedCar = existingCars.find(c => c.id.toString() === carId);
+    if (selectedCar) {
+      setFormData({
+        ...formData,
+        name: selectedCar.name,
+        type: selectedCar.type,
+        fuelCapacity: selectedCar.fuel_capacity,
+        transmission: selectedCar.transmission,
+        capacity: selectedCar.capacity.toString(),
+        price: selectedCar.price.toString(),
+        originalPrice: selectedCar.original_price?.toString() || '',
+        description: selectedCar.description || '',
+      });
+      // reset the select back to default to allow selecting another car later if they want
+      e.target.value = "";
+    }
+  };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
@@ -183,6 +226,32 @@ export default function AddCarPage() {
           <p className="text-sm sm:text-base text-gray-400">Fill in the details to add a new car to your inventory</p>
         </div>
 
+        {/* Auto-fill from Existing Car */}
+        {!fetchingCars && existingCars.length > 0 && (
+          <div className="mb-6 bg-bg-card border border-bg-elevated rounded-xl shadow-lg p-5 sm:p-6 lg:p-8">
+            <label className="block text-sm font-semibold text-gold mb-2">
+              Auto-fill from an existing car (Optional)
+            </label>
+            <select
+              onChange={handleAutoFill}
+              defaultValue=""
+              className="w-full px-4 py-2.5 bg-bg-elevated border border-bg-elevated rounded-lg focus:outline-none focus:ring-2 focus:ring-gold text-white"
+            >
+              <option value="" disabled className="bg-bg-elevated text-gray-400">
+                Select a car to copy details from...
+              </option>
+              {existingCars.map(car => (
+                <option key={car.id} value={car.id} className="bg-bg-elevated">
+                  {car.name} {car.license_plate ? `(${car.license_plate})` : ''}
+                </option>
+              ))}
+            </select>
+            <p className="text-xs text-gray-400 mt-2">
+              This will overwrite the fields below except images and license plate.
+            </p>
+          </div>
+        )}
+
         {/* Form */}
         <form onSubmit={handleSubmit} className="bg-bg-card border border-bg-elevated rounded-xl shadow-lg p-5 sm:p-6 lg:p-8">
           {/* Multiple Images Upload */}
@@ -326,11 +395,10 @@ export default function AddCarPage() {
 
             <div>
               <label className="block text-sm font-semibold text-gray-300 mb-2">
-                License Plate <span className="text-red-400">*</span>
+                License Plate <span className="text-xs text-gray-500">(Optional)</span>
               </label>
               <input
                 type="text"
-                required
                 value={formData.licensePlate}
                 onChange={(e) => setFormData({ ...formData, licensePlate: e.target.value.toUpperCase() })}
                 className="w-full px-4 py-2.5 bg-bg-elevated border border-bg-elevated rounded-lg focus:outline-none focus:ring-2 focus:ring-gold text-white placeholder:text-gray-500"

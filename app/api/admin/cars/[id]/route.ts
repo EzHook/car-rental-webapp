@@ -136,7 +136,7 @@ export async function PUT(
     // Validate required fields
     if (!name || !type || !imageUrls || !Array.isArray(imageUrls) || 
         imageUrls.length === 0 || !fuelCapacity || !transmission || 
-        !capacity || !price || !licensePlate) {
+        !capacity || !price) {
       return NextResponse.json(
         { error: 'Missing required fields or invalid image data' },
         { status: 400 }
@@ -152,16 +152,18 @@ export async function PUT(
     }
 
     // Check if license plate exists for a different car
-    const existing = await sql`
-      SELECT id FROM cars 
-      WHERE license_plate = ${licensePlate} AND id != ${carId}
-    `;
+    if (licensePlate) {
+      const existing = await sql`
+        SELECT id FROM cars 
+        WHERE license_plate = ${licensePlate} AND id != ${carId}
+      `;
 
-    if (existing.length > 0) {
-      return NextResponse.json(
-        { error: 'License plate already exists for another car' },
-        { status: 400 }
-      );
+      if (existing.length > 0) {
+        return NextResponse.json(
+          { error: 'License plate already exists for another car' },
+          { status: 400 }
+        );
+      }
     }
 
     // Update car in database
@@ -176,7 +178,7 @@ export async function PUT(
         capacity = ${capacity},
         price = ${price},
         original_price = ${originalPrice || null},
-        license_plate = ${licensePlate},
+        license_plate = ${licensePlate || null},
         description = ${description || null},
         is_available = ${isAvailable !== undefined ? isAvailable : true},
         updated_at = NOW()

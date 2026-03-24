@@ -5,14 +5,12 @@ import { usePathname } from 'next/navigation';
 import Header from '@/components/Header';
 import AuthHeader from '@/components/AuthHeader';
 import Footer from '@/components/Footer';
-import FilterSidebar from '@/components/FilterSidebar';
 
 export default function MainLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [user, setUser] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
   const pathname = usePathname();
@@ -37,11 +35,6 @@ export default function MainLayout({
     checkAuth();
   }, []);
 
-  const handleApplyFilters = (filters: any) => {
-    console.log('Filters applied:', filters);
-    setIsFilterOpen(false);
-  };
-
   // Show AuthHeader on public routes, Header on protected routes
   const isPublicRoute = ['/', '/login', '/signup', '/about', '/services', '/contact'].includes(pathname);
   
@@ -58,18 +51,8 @@ export default function MainLayout({
       {isPublicRoute && !user ? (
         <AuthHeader />
       ) : (
-        <>
-        <Header onFilterClick={() => setIsFilterOpen(true)} />
-        <FilterSidebar
-        isOpen={isFilterOpen}
-        onClose={() => setIsFilterOpen(false)}
-        onToggle={() => setIsFilterOpen(!isFilterOpen)}
-        onApplyFilters={handleApplyFilters}
-      />
-          </>
+        <Header />
       )}
-      
-    
       
       <main className="min-h-[calc(100vh-140px)]">
         {children}

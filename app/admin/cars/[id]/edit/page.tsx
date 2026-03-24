@@ -396,13 +396,12 @@ export default function EditCarPage() {
             {/* License Plate */}
             <div>
               <label className="block text-sm font-semibold text-gray-300 mb-2">
-                License Plate <span className="text-red-400">*</span>
+                License Plate <span className="text-xs text-gray-500">(Optional)</span>
               </label>
               <input
                 type="text"
-                required
                 value={formData.licensePlate}
-                onChange={(e) => setFormData({ ...formData, licensePlate: e.target.value })}
+                onChange={(e) => setFormData({ ...formData, licensePlate: e.target.value.toUpperCase() })}
                 className="w-full px-4 py-2.5 bg-bg-elevated border border-bg-elevated rounded-lg focus:outline-none focus:ring-2 focus:ring-gold text-white placeholder:text-gray-500"
                 placeholder="e.g., ABC-1234"
               />

@@ -25,7 +25,7 @@ export async function POST(request: NextRequest) {
 
     // Validate required fields
     if (!name || !type || !imageUrls || !Array.isArray(imageUrls) || imageUrls.length === 0 || 
-        !fuelCapacity || !transmission || !capacity || !price || !licensePlate) {
+        !fuelCapacity || !transmission || !capacity || !price) {
       return NextResponse.json(
         { error: 'Missing required fields or invalid image data' },
         { status: 400 }
@@ -41,15 +41,17 @@ export async function POST(request: NextRequest) {
     }
 
     // Check if license plate already exists
-    const existing = await sql`
-      SELECT id FROM cars WHERE license_plate = ${licensePlate}
-    `;
+    if (licensePlate) {
+      const existing = await sql`
+        SELECT id FROM cars WHERE license_plate = ${licensePlate}
+      `;
 
-    if (existing.length > 0) {
-      return NextResponse.json(
-        { error: 'License plate already exists' },
-        { status: 400 }
-      );
+      if (existing.length > 0) {
+        return NextResponse.json(
+          { error: 'License plate already exists' },
+          { status: 400 }
+        );
+      }
     }
 
     // Insert car into database with array of image URLs
@@ -74,7 +76,7 @@ export async function POST(request: NextRequest) {
         ${capacity},
         ${price},
         ${originalPrice || null},
-        ${licensePlate},
+        ${licensePlate || null},
         ${description || null}
       )
       RETURNING *

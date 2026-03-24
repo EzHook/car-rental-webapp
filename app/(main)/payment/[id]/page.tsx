@@ -16,7 +16,7 @@ interface Car {
   id: number;
   name: string;
   type: string;
-  image_url: string;
+  image_urls: string[];
   fuel_capacity: string;
   transmission: string;
   capacity: number;
@@ -59,6 +59,8 @@ function PaymentContent() {
     marketing: false,
     terms: false,
   });
+  
+  const [saveBillingInfo, setSaveBillingInfo] = useState(false);
 
   useEffect(() => {
     loadUserData();
@@ -84,14 +86,20 @@ function PaymentContent() {
 
   const loadUserData = async () => {
     try {
-      const response = await fetch('/api/auth/me');
-      if (response.ok) {
-        const data = await response.json();
-        setBillingInfo({
-          ...billingInfo,
-          name: data.user.fullName || '',
-          phone: data.user.phone || '',
-        });
+      const savedInfo = localStorage.getItem('savedBillingInfo');
+      if (savedInfo) {
+        setBillingInfo(JSON.parse(savedInfo));
+        setSaveBillingInfo(true);
+      } else {
+        const response = await fetch('/api/auth/me');
+        if (response.ok) {
+          const data = await response.json();
+          setBillingInfo({
+            ...billingInfo,
+            name: data.user.fullName || '',
+            phone: data.user.phone || '',
+          });
+        }
       }
     } catch (error) {
       console.error('Failed to load user data:', error);
@@ -229,6 +237,12 @@ function PaymentContent() {
     if (dropoffDate <= pickupDate) {
       alert('Drop-off date must be after pick-up date');
       return;
+    }
+
+    if (saveBillingInfo) {
+      localStorage.setItem('savedBillingInfo', JSON.stringify(billingInfo));
+    } else {
+      localStorage.removeItem('savedBillingInfo');
     }
 
     setIsProcessing(true);
@@ -384,6 +398,21 @@ function PaymentContent() {
                     className="w-full px-4 py-2.5 text-sm bg-bg-elevated border border-bg-elevated rounded-lg focus:outline-none focus:ring-2 focus:ring-gold text-white placeholder:text-gray-500"
                   />
                 </div>
+                
+                {/* Save info checkbox */}
+                <div className="md:col-span-2 mt-2">
+                  <label className="flex items-start gap-3 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={saveBillingInfo}
+                      onChange={(e) => setSaveBillingInfo(e.target.checked)}
+                      className="mt-0.5 size-4 rounded border-2 border-bg-elevated text-gold focus:ring-2 focus:ring-gold accent-gold"
+                    />
+                    <span className="text-sm font-semibold text-gray-300">
+                      Save my address and information for faster form filling next time
+                    </span>
+                  </label>
+                </div>
               </div>
             </div>
 
@@ -419,6 +448,11 @@ function PaymentContent() {
                         className="flex-1 px-4 py-2.5 text-sm bg-bg-elevated border border-bg-elevated rounded-lg focus:outline-none focus:ring-2 focus:ring-gold text-white"
                       >
                         <option value="" className="bg-bg-elevated">Select your city</option>
+                        {rentalInfo.pickupLocation && !['Mumbai', 'Delhi', 'Bangalore', 'Goa', 'Pune', 'Hyderabad'].includes(rentalInfo.pickupLocation) && (
+                          <option value={rentalInfo.pickupLocation} className="bg-bg-elevated">
+                            {rentalInfo.pickupLocation} (Current Location)
+                          </option>
+                        )}
                         <option value="Mumbai" className="bg-bg-elevated">Mumbai</option>
                         <option value="Delhi" className="bg-bg-elevated">Delhi</option>
                         <option value="Bangalore" className="bg-bg-elevated">Bangalore</option>
@@ -495,6 +529,11 @@ function PaymentContent() {
                       className="w-full px-4 py-2.5 text-sm bg-bg-elevated border border-bg-elevated rounded-lg focus:outline-none focus:ring-2 focus:ring-gold text-white"
                     >
                       <option value="" className="bg-bg-elevated">Select your city</option>
+                      {rentalInfo.dropoffLocation && !['Mumbai', 'Delhi', 'Bangalore', 'Goa', 'Pune', 'Hyderabad'].includes(rentalInfo.dropoffLocation) && (
+                        <option value={rentalInfo.dropoffLocation} className="bg-bg-elevated">
+                          {rentalInfo.dropoffLocation}
+                        </option>
+                      )}
                       <option value="Mumbai" className="bg-bg-elevated">Mumbai</option>
                       <option value="Delhi" className="bg-bg-elevated">Delhi</option>
                       <option value="Bangalore" className="bg-bg-elevated">Bangalore</option>
@@ -614,7 +653,7 @@ function PaymentContent() {
               <div className="flex items-center gap-4 mb-6">
                 <div className="relative w-28 h-20 bg-linear-to-br from-bg-elevated to-bg-secondary rounded-lg overflow-hidden shrink-0">
                   <Image
-                    src={car.image_url}
+                    src={car.image_urls[0]}
                     alt={car.name}
                     fill
                     className="object-contain p-2"

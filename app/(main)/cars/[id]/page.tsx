@@ -239,8 +239,12 @@ export default function CarDetailsPage() {
 
           {/* Thumbnail Images - only show if there are multiple images */}
           {carImages.length > 1 && (
-            <div className="grid grid-cols-3 gap-4">
-              {carImages.slice(0, 3).map((image, index) => (
+            <div className={`grid gap-3 sm:gap-4 ${
+              carImages.length >= 5 ? 'grid-cols-5' : 
+              carImages.length === 4 ? 'grid-cols-4' : 
+              'grid-cols-3'
+            }`}>
+              {carImages.map((image, index) => (
                 <button
                   key={index}
                   onClick={() => setSelectedImageIndex(index)}
